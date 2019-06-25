@@ -1,0 +1,9 @@
+{
+    "template": "helper_criteria",
+    "description": "Add macros after user criteria hooks.",
+    "execution_order": 10,
+    "enabled": true,
+    "action": "preg_replace",
+    "find": "/<!--\\[XF:user:(top|after_(?:status|connected|groups|content|profile)|bottom)\\]-->/",
+    "replace": "$0\n<xf:macro template=\"thusercriteria_macros\" name=\"$1\" arg-criteria=\"{$criteria}\" />"
+}

@@ -1,0 +1,1 @@
+User has given at least X reactions of <em>each of</em> the selected

@@ -1,0 +1,9 @@
+{
+    "event_id": "criteria_user",
+    "execute_order": 5,
+    "callback_class": "ThemeHouse\\UserCriteria\\Listener\\CriteriaUser",
+    "callback_method": "criteriaUser",
+    "active": true,
+    "hint": "",
+    "description": ""
+}

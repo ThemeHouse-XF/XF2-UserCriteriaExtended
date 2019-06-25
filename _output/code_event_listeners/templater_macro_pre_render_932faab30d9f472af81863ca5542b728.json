@@ -1,0 +1,9 @@
+{
+    "event_id": "templater_macro_pre_render",
+    "execute_order": 10,
+    "callback_class": "ThemeHouse\\UserCriteria\\Listener\\Admin\\TemplaterMacroPreRender",
+    "callback_method": "thusercriteriaMacrosAdvancedPane",
+    "active": true,
+    "hint": "admin:thusercriteria_macros:advanced_pane",
+    "description": "admin:thusercriteria_macros:advanced_pane"
+}

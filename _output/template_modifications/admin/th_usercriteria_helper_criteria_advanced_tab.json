@@ -1,0 +1,9 @@
+{
+    "template": "helper_criteria",
+    "description": "Add advanced criteria tab",
+    "execution_order": 10,
+    "enabled": true,
+    "action": "str_replace",
+    "find": "{{ $userTabTitle ? $userTabTitle : phrase('user_criteria') }}</a>",
+    "replace": "$0\n<a class=\"tabs-tab{{ $active == 'th_usercriteria_advanced' ? ' is-active' : '' }}\"\n\t\t\trole=\"tab\" tabindex=\"0\" aria-controls=\"{{ unique_id('th_usercriteria_advanced') }}\">\n\t\t\t{{ phrase('th_user_criteria_advanced') }}</a>"
+}

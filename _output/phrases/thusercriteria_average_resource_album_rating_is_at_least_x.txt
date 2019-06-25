@@ -1,0 +1,1 @@
+Users average album rating is at least X

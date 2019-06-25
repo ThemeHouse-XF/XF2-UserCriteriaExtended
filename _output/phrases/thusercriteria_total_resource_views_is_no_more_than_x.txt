@@ -1,0 +1,1 @@
+Users resources have been viewed no more than X times

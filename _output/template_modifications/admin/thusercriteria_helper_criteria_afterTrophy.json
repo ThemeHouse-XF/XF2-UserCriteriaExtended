@@ -1,0 +1,9 @@
+{
+    "template": "helper_criteria",
+    "description": "Add user criteria after content_after_trophies hook.",
+    "execution_order": 10,
+    "enabled": true,
+    "action": "str_replace",
+    "find": "<!--[XF:user:content_after_trophies]-->",
+    "replace": "<xf:set var=\"$fieldNameMaxTrophy\" value=\"{$xf.options.thusercriteria_prefix}max_trophy_points\" />\n<xf:option name=\"user_criteria[{$fieldNameMaxTrophy}][rule]\" value=\"{$fieldNameMaxTrophy}\" selected=\"{$criteria.{$fieldNameMaxTrophy}}\"\n\t\t   label=\"{{ phrase('th_usercriteria_user_has_no_more_than_x_trophy_points:') }}\">\n\t<xf:numberbox name=\"user_criteria[{$fieldNameMaxTrophy}][data][points]\" value=\"{$criteria.{$fieldNameMaxTrophy}.points}\"\n\t\t\t\t  size=\"5\" min=\"0\" step=\"1\" />\n</xf:option>\n$0"
+}

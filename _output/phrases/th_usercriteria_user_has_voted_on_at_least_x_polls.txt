@@ -1,0 +1,1 @@
+User has voted on at least X polls

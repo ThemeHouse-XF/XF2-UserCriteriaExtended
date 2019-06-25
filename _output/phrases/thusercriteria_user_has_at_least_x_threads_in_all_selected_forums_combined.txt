@@ -1,0 +1,1 @@
+User has at least X threads in <em>all of</em> the selected forums <em>combined</em>

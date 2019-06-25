@@ -1,0 +1,1 @@
+User has no more than X threads on <em>all of</em> the selected forums <em>combined</em>

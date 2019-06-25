@@ -1,0 +1,1 @@
+Users albums have received no more than X comments

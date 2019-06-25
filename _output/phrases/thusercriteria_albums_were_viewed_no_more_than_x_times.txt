@@ -1,0 +1,1 @@
+Users albums were viewed no more than X times

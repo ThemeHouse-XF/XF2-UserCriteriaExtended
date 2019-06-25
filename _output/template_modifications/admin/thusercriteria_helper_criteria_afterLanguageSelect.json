@@ -1,0 +1,9 @@
+{
+    "template": "helper_criteria",
+    "description": "Add user criteria after language select.",
+    "execution_order": 10,
+    "enabled": true,
+    "action": "preg_replace",
+    "find": "/<xf:option value=\"{\\$treeEntry\\.record\\.language_id}\">{{ repeat\\('--', \\$treeEntry\\.depth\\) }} {\\$treeEntry\\.record\\.title}<\\/xf:option>\\s*<\\/xf:foreach>\\s*<\\/xf:select>\\s*<\\/xf:option>/s",
+    "replace": "$0\n\t\t\t\t<xf:set var=\"$fieldNameNotLanguage\" value=\"{$xf.options.thusercriteria_prefix}not_language\" />\n\t\t\t\t<xf:option name=\"user_criteria[{$fieldNameNotLanguage}][rule]\" value=\"{$fieldNameNotLanguage}\" selected=\"{$criteria.{$fieldNameNotLanguage}}\"\n\t\t\t\t\tlabel=\"{{ phrase('thusercriteria_user_is_not_browsing_with_following_language:') }}\">\n\n\t\t\t\t\t<xf:select name=\"user_criteria[{$fieldNameNotLanguage}][data][language_id]\" value=\"{$criteria.{$fieldNameNotLanguage}.language_id}\">\n\t\t\t\t\t\t<xf:foreach loop=\"$data.languageTree.getFlattened(0)\" value=\"$treeEntry\">\n\t\t\t\t\t\t\t<xf:option value=\"{$treeEntry.record.language_id}\">{{ repeat('--', $treeEntry.depth) }} {$treeEntry.record.title}</xf:option>\n\t\t\t\t\t\t</xf:foreach>\n\t\t\t\t\t</xf:select>\n\n\t\t\t\t</xf:option>"
+}

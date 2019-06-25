@@ -1,0 +1,1 @@
+This value can be changed to avoid compatibility issues with other add-ons or enable similar criteria set by an existing add-on to be maintained. It is not recommended to change this value as it may break previously set criteria.

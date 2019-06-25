@@ -1,0 +1,9 @@
+{
+    "template": "helper_criteria",
+    "description": "Add advanced criteria tab pane",
+    "execution_order": 10,
+    "enabled": true,
+    "action": "str_replace",
+    "find": "<li class=\"{{ $active == 'user_field' ? 'is-active' : '' }}\"",
+    "replace": "<li class=\"{{ $active == 'th_usercriteria_advanced' ? 'is-active' : '' }}\"\n\trole=\"tabpanel\"\n\tid=\"{{ unique_id('th_usercriteria_advanced') }}\">\n\t<xf:macro name=\"advanced_pane\"\n\t\t\t  template=\"thusercriteria_macros\"\n\t\t\t  arg-criteria=\"{$criteria}\" arg-data=\"{$data}\" />\n</li>\n$0"
+}

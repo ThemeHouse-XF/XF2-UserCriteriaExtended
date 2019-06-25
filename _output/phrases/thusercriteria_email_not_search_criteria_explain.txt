@@ -1,0 +1,1 @@
+You may enter one or more text snippets separated by commas, and users whose email addresses contain any of the snippets will not match the criteria.

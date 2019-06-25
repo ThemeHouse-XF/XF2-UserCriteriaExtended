@@ -1,0 +1,1 @@
+User has no more than X resources in <em>one of</em> the following categories

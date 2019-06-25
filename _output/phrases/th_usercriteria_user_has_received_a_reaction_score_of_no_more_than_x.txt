@@ -1,0 +1,1 @@
+User has received a reaction score of no more than X

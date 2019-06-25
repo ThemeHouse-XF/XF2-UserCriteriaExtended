@@ -1,0 +1,1 @@
+Users average media item rating is at least X

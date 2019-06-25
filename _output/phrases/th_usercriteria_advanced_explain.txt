@@ -1,0 +1,1 @@
+This section provides advanced user criteria. Any criterion listed here causes a database query when being checked and hence may have performance implications for your board. Use with caution.

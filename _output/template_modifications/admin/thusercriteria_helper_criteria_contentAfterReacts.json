@@ -1,0 +1,9 @@
+{
+    "template": "helper_criteria",
+    "description": "Add user criteria after content_after_reactions hook.",
+    "execution_order": 9,
+    "enabled": true,
+    "action": "str_replace",
+    "find": "<!--[XF:user:content_after_reactions]-->",
+    "replace": "<xf:set var=\"$fieldNameReactScore\" value=\"{$xf.options.thusercriteria_prefix}max_react_score\" />\n<xf:option name=\"user_criteria[{$fieldNameReactScore}][rule]\" value=\"{$fieldNameReactScore}\" selected=\"{$criteria.{$fieldNameReactScore}}\"\n\t\t   label=\"{{ phrase('th_usercriteria_user_has_received_a_reaction_score_of_no_more_than_x:') }}\">\n\t<xf:numberbox name=\"user_criteria[{$fieldNameReactScore}][data][reactions]\" value=\"{$criteria.{$fieldNameReactScore}.reactions}\"\n\t\t\t\t  size=\"5\" min=\"0\" step=\"1\" />\n</xf:option>\n\n<xf:set var=\"$fieldNameReactRatio\" value=\"{$xf.options.thusercriteria_prefix}max_react_ratio\" />\n<xf:option name=\"user_criteria[{$fieldNameReactRatio}][rule]\" value=\"{$fieldNameReactRatio}\" selected=\"{$criteria.{$fieldNameReactRatio}}\"\n\t\t   label=\"{{ phrase('th_usercriteria_user_reaction_message_ratio_is_no_more_than:') }}\">\n\t<xf:numberbox name=\"user_criteria[{$fieldNameReactRatio}][data][ratio]\" value=\"{$criteria.{$fieldNameReactRatio}.ratio}\"\n\t\t\t\t  size=\"5\" min=\"0\" step=\"0.25\" />\n\t<xf:afterhint>{{ phrase('reaction_message_ratio_explanation') }}</xf:afterhint>\n</xf:option>\n\n$0"
+}

@@ -1,0 +1,1 @@
+Users highest rated resource has a rating of at least X

@@ -1,0 +1,1 @@
+Users highest rated media item is rated not higher than X

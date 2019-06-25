@@ -1,0 +1,1 @@
+Users threads have received no more than X replies total

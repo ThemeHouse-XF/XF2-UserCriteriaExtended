@@ -1,0 +1,1 @@
+User has a user upgrade expiring within the next X days

@@ -1,0 +1,1 @@
+Users resources have been downloaded at least X times

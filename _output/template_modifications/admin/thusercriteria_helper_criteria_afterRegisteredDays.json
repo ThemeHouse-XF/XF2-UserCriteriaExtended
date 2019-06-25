@@ -1,0 +1,9 @@
+{
+    "template": "helper_criteria",
+    "description": "Add user criteria after registered days.",
+    "execution_order": 10,
+    "enabled": true,
+    "action": "preg_replace",
+    "find": "/<xf:numberbox name=\"user_criteria\\[registered_days\\]\\[data\\]\\[days\\]\" value=\"{\\$criteria\\.registered_days\\.days}\"\\s*size=\"5\" min=\"0\" step=\"1\" \\/>\\s*<\\/xf:option>/s",
+    "replace": "$0\n\t\t\t\t<xf:set var=\"$fieldNameRegMaxDays\" value=\"{$xf.options.thusercriteria_prefix}registered_max_days\" />\n\t\t\t\t<xf:option name=\"user_criteria[{$fieldNameRegMaxDays}][rule]\" value=\"{$fieldNameRegMaxDays}\" selected=\"{$criteria.{$fieldNameRegMaxDays}}\"\n\t\t\t\t\tlabel=\"{{ phrase('thusercriteria_user_has_been_registered_for_no_more_than_x_days:') }}\">\n\t\t\t\t\t<xf:numberbox name=\"user_criteria[{$fieldNameRegMaxDays}][data][days]\" value=\"{$criteria.{$fieldNameRegMaxDays}.days}\"\n\t\t\t\t\t\tsize=\"5\" min=\"0\" step=\"1\" />\n\t\t\t\t</xf:option>"
+}

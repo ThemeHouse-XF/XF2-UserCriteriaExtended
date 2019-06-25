@@ -1,0 +1,1 @@
+User has at least X media items in <em>one of</em> the following categories
