@@ -300,7 +300,7 @@ class User extends XFCP_User
     protected function calcThucThreadAggregates()
     {
         if (!isset($this->thuc_user_criteria_cache['threads'])) {
-            $aggregates = $this->db()->fetchPairs('
+            $aggregates = $this->db()->fetchPairs("
             SELECT
                 node_id,
                 COUNT(*) as count
@@ -308,9 +308,10 @@ class User extends XFCP_User
               xf_thread
             WHERE
               user_id = ?
+              ANd discussion_state = 'visible'
             GROUP BY
               node_id
-        ', [$this->user_id]);
+        ", [$this->user_id]);
 
             if (is_array($aggregates)) {
                 $aggregates = array_map('intval', $aggregates);
@@ -349,7 +350,7 @@ class User extends XFCP_User
     protected function calcThucPostAggregates()
     {
         if (!isset($this->thuc_user_criteria_cache['posts'])) {
-            $aggregates = $this->db()->fetchPairs('
+            $aggregates = $this->db()->fetchPairs("
             SELECT
                 thread.node_id,
                 COUNT(*) as count
@@ -358,9 +359,11 @@ class User extends XFCP_User
             LEFT JOIN xf_thread thread USING (thread_id)
             WHERE
               post.user_id = ?
+              AND post.message_state = 'visible'
+              AND thread.discussion_state = 'visible'
             GROUP BY
               thread.node_id
-        ', [$this->user_id]);
+        ", [$this->user_id]);
 
             if (is_array($aggregates)) {
                 $aggregates = array_map('intval', $aggregates);
@@ -604,7 +607,7 @@ class User extends XFCP_User
     protected function calcThucReceivedThreadReplyAggregates()
     {
         if (!isset($this->thuc_user_criteria_cache['thread_replies'])) {
-            $aggregates = $this->db()->fetchRow('
+            $aggregates = $this->db()->fetchRow("
             SELECT
                 MAX(reply_count) as max,
                 COUNT(*) as total
@@ -613,8 +616,11 @@ class User extends XFCP_User
             JOIN
               xf_thread thread ON (thread.thread_id = post.thread_id && thread.first_post_id != post.post_id)
             WHERE
-              thread.user_id = ? && post.user_id <> ?
-        ', [$this->user_id, $this->user_id]);
+              thread.user_id = ?
+              AND post.user_id <> ?
+              AND post.message_state = 'visible'
+              AND thread.discussion_state = 'visible'
+        ", [$this->user_id, $this->user_id]);
 
             if (is_array($aggregates)) {
                 $aggregates = array_map('intval', $aggregates);
@@ -699,14 +705,15 @@ class User extends XFCP_User
     public function getThucProfilePostCount()
     {
         if (!isset($this->thuc_user_criteria_cache['profile_posts'])) {
-            $this->thuc_user_criteria_cache['profile_posts'] = (int)$this->db()->fetchOne('
+            $this->thuc_user_criteria_cache['profile_posts'] = (int)$this->db()->fetchOne("
                 SELECT
                     COUNT(*)
                 FROM
                   xf_profile_post
                 WHERE
                   user_id = ?
-            ', $this->user_id);
+                  AND message_state = 'visible'
+            ", $this->user_id);
         }
 
         return $this->thuc_user_criteria_cache['profile_posts'];
@@ -718,14 +725,15 @@ class User extends XFCP_User
     public function getThucProfilePostCommentCount()
     {
         if (!isset($this->thuc_user_criteria_cache['profile_post_comments'])) {
-            $this->thuc_user_criteria_cache['profile_post_comments'] = (int)$this->db()->fetchOne('
+            $this->thuc_user_criteria_cache['profile_post_comments'] = (int)$this->db()->fetchOne("
                 SELECT
                     COUNT(*)
                 FROM
                   xf_profile_post_comment
                 WHERE
                   user_id = ?
-            ', $this->user_id);
+                  AND message_state = 'visible'
+            ", $this->user_id);
         }
 
         return $this->thuc_user_criteria_cache['profile_post_comments'];
@@ -807,7 +815,7 @@ class User extends XFCP_User
         $threadIds = array_filter(array_map("intval", $threadIds));
         $threadIdString = \XF::db()->escapeString(join(',', $threadIds));
 
-        return \XF::db()->fetchPairs('
+        return \XF::db()->fetchPairs("
             SELECT
                 thread_id,
                 COUNT(*)
@@ -816,9 +824,10 @@ class User extends XFCP_User
             WHERE
               user_id = ?
               AND FIND_IN_SET(thread_id, ?)
+              AND message_state = 'visible'
             GROUP BY
               thread_id
-        ', [$this->user_id, $threadIdString]) + array_fill_keys($threadIds, 0);
+        ", [$this->user_id, $threadIdString]) + array_fill_keys($threadIds, 0);
     }
 
     /**
@@ -838,7 +847,7 @@ class User extends XFCP_User
             $addonCache = \XF::app()->container('addon.cache');
             $result = null;
             if (isset($addonCache['XFRM'])) {
-                $result = $this->db()->fetchRow('
+                $result = $this->db()->fetchRow("
                     SELECT
                         SUM(download_count) AS total_downloads,
                         MAX(download_count) AS highest_downloads,
@@ -852,7 +861,8 @@ class User extends XFCP_User
                         xf_rm_resource
                     WHERE
                         user_id = ?
-                ', $this->user_id);
+                        AND resource_state = 'visible'
+                ", $this->user_id);
             }
 
             if (!isset($addonCache['XFRM']) || !$result) {
@@ -943,8 +953,12 @@ class User extends XFCP_User
                     COUNT(*) AS count
                 FROM
                   xf_rm_resource_rating
+                JOIN
+                  xf_rm_resource USING (resource_id)
                 WHERE
-                  user_id = ?
+                  xf_rm_resource_rating.user_id = ?
+                  AND xf_rm_resource_rating.rating_state = 'visible'
+                  AND xf_rm_resource.resource_state = 'visible'
             ", $this->user_id);
             } else {
                 $this->thuc_user_criteria_cache['xfrm_reviews_given'] = 0;
@@ -971,7 +985,7 @@ class User extends XFCP_User
             $addonCache = \XF::app()->container('addon.cache');
             $result = null;
             if (isset($addonCache['XFMG'])) {
-                $result = $this->db()->fetchRow('
+                $result = $this->db()->fetchRow("
                     SELECT
                         SUM(comment_count) AS total_comments,
                         MAX(comment_count) AS highest_comments,
@@ -984,7 +998,8 @@ class User extends XFCP_User
                         xf_mg_album
                     WHERE
                         user_id = ?
-                ', $this->user_id);
+                        AND album_state = 'visible'
+                ", $this->user_id);
             }
 
             if (!isset($addonCache['XFMG']) || !$result) {
@@ -1103,7 +1118,7 @@ class User extends XFCP_User
             $addonCache = \XF::app()->container('addon.cache');
             $result = null;
             if (isset($addonCache['XFMG'])) {
-                $result = $this->db()->fetchRow('
+                $result = $this->db()->fetchRow("
                     SELECT
                         SUM(comment_count) AS total_comments,
                         MAX(comment_count) AS highest_comments,
@@ -1116,7 +1131,8 @@ class User extends XFCP_User
                         xf_mg_media_item
                     WHERE
                         user_id = ?
-                ', $this->user_id);
+                        AND media_state = 'visible'
+                ", $this->user_id);
             }
 
             if (!isset($addonCache['XFMG']) || !$result) {
@@ -1218,6 +1234,7 @@ class User extends XFCP_User
                   xf_rm_resource
                 WHERE
                   user_id = ?
+                  AND resource_state = 'visible'
             ", $this->user_id);
             } else {
                 $aggregates = [];
@@ -1254,6 +1271,7 @@ class User extends XFCP_User
                   xf_mg_media_item
                 WHERE
                   user_id = ?
+                  AND media_state = 'visible'
             ", $this->user_id);
 
                 $this->thuc_user_criteria_cache['xfmg_category_item_aggregates'] = array_map("intval", $aggregates);
