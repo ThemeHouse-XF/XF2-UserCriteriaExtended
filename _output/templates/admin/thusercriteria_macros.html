@@ -1456,12 +1456,12 @@
 
 <xf:macro name="top" arg-criteria="!">
 	<xf:checkboxrow label="{{ phrase('thusercriteria_miscellaneous') }}">
-		<xf:set var="$fieldName" value="{$xf.options.thusercriteria_prefix}never" />
-		<xf:option name="user_criteria[{$fieldName}][rule]" value="{$fieldName}" selected="{$criteria.{$fieldName}}"
+		<xf:set var="$fieldNameNever" value="{$xf.options.thusercriteria_prefix}never" />
+		<xf:option name="user_criteria[{$fieldNameNever}][rule]" value="{$fieldNameNever}" selected="{$criteria.{$fieldNameNever}}"
 				   label="{{ phrase('thusercriteria_never') }}" />
 
-		<xf:set var="$fieldName" value="{$xf.options.thusercriteria_prefix}always" />
-		<xf:option name="user_criteria[{$fieldName}][rule]" value="{$fieldName}" selected="{$criteria.{$fieldName}}"
+		<xf:set var="$fieldNameAlways" value="{$xf.options.thusercriteria_prefix}always" />
+		<xf:option name="user_criteria[{$fieldNameAlways}][rule]" value="{$fieldNameAlways}" selected="{$criteria.{$fieldNameAlways}}"
 				   label="{{ phrase('thusercriteria_always') }}" />
 	</xf:checkboxrow>
 </xf:macro>
