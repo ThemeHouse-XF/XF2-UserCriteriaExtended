@@ -318,14 +318,14 @@
 			<xf:set var="$fieldNameMinReplyMax" value="{$xf.options.thusercriteria_prefix}min_reply_max" />
 			<xf:option name="user_criteria[{$fieldNameMinReplyMax}][rule]" value="{$fieldNameMinReplyMax}" selected="{$criteria.{$fieldNameMinReplyMax}}"
 					   label="{{ phrase('thusercriteria_users_highest_reply_thread_received_at_least_x_replies:') }}">
-				<xf:numberbox name="user_criteria[{$fieldNameMinReplyMax}][data][replies]" value="{$criteria.{$fieldNameMinReplyMax}.threads}"
+				<xf:numberbox name="user_criteria[{$fieldNameMinReplyMax}][data][replies]" value="{$criteria.{$fieldNameMinReplyMax}.replies}"
 							  size="5" min="0" step="1" />
 			</xf:option>
 
 			<xf:set var="$fieldNameMaxReplyMax" value="{$xf.options.thusercriteria_prefix}max_reply_max" />
 			<xf:option name="user_criteria[{$fieldNameMaxReplyMax}][rule]" value="{$fieldNameMaxReplyMax}" selected="{$criteria.{$fieldNameMaxReplyMax}}"
 					   label="{{ phrase('thusercriteria_users_highest_reply_thread_received_no_more_than_x_replies:') }}">
-				<xf:numberbox name="user_criteria[{$fieldNameMaxReplyMax}][data][replies]" value="{$criteria.{$fieldNameMaxReplyMax}.threads}"
+				<xf:numberbox name="user_criteria[{$fieldNameMaxReplyMax}][data][replies]" value="{$criteria.{$fieldNameMaxReplyMax}.replies}"
 							  size="5" min="0" step="1" />
 			</xf:option>
 
