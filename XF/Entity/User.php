@@ -764,7 +764,7 @@ class User extends XFCP_User
      */
     public function getThucReceivedReactionCount($reactionId)
     {
-        return isset($this->calcThucGivenReactionAggregates()[$reactionId]) ? $this->calcThucGivenReactionAggregates()[$reactionId] : 0;
+        return isset($this->getThucReceivedReactionCount()[$reactionId]) ? $this->getThucReceivedReactionCount()[$reactionId] : 0;
     }
 
     /**
