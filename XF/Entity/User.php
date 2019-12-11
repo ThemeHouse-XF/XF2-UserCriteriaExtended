@@ -132,6 +132,33 @@ class User extends XFCP_User
     }
 
     /**
+     * @var integer[]
+     */
+    protected $postDaysData = [];
+
+    /**
+     * @param $days
+     * @return integer
+     */
+    public function getThucPostsDays($days)
+    {
+        if (!isset($this->postDaysData[$days])) {
+            $this->postDaysData[$days] = \XF::db()->fetchOne("
+                SELECT
+                    count(*)
+                FROM
+                  xf_post
+                WHERE
+                  user_id = ?
+                  AND message_state = 'visible'
+                  AND post_date >= ?
+            ", [$this->user_id, \XF::$time - 60 * 60 * 24 * $days]);
+        }
+
+        return (int)$this->postDaysData[$days];
+    }
+
+    /**
      * @return integer
      */
     public function getThucWarningCount()
@@ -140,7 +167,7 @@ class User extends XFCP_User
     }
 
     /**
-     * @return mixed
+     * @return integer[]
      */
     protected function calcThucWarningAggregates()
     {
@@ -210,7 +237,7 @@ class User extends XFCP_User
     }
 
     /**
-     * @return mixed
+     * @return integer[]
      */
     protected function calcThucUserUpgradeAggregates()
     {
@@ -295,7 +322,7 @@ class User extends XFCP_User
     }
 
     /**
-     * @return mixed
+     * @return integer[]
      */
     protected function calcThucThreadAggregates()
     {
@@ -345,7 +372,7 @@ class User extends XFCP_User
     }
 
     /**
-     * @return mixed
+     * @return integer[]
      */
     protected function calcThucPostAggregates()
     {
@@ -406,7 +433,7 @@ class User extends XFCP_User
     }
 
     /**
-     * @return mixed
+     * @return integer[]
      */
     protected function calcThucWatchAggregates()
     {
@@ -523,7 +550,7 @@ class User extends XFCP_User
     }
 
     /**
-     * @return mixed
+     * @return integer[]
      */
     protected function calcThucReportAggregates()
     {
@@ -602,7 +629,7 @@ class User extends XFCP_User
     }
 
     /**
-     * @return mixed
+     * @return integer[]
      */
     protected function calcThucReceivedThreadReplyAggregates()
     {
@@ -768,7 +795,7 @@ class User extends XFCP_User
     }
 
     /**
-     * @return mixed
+     * @return integer[]
      */
     protected function calcThucGivenReactionAggregates()
     {
@@ -839,7 +866,7 @@ class User extends XFCP_User
     }
 
     /**
-     * @return mixed
+     * @return integer[]
      */
     protected function calcThucResourceAggregates()
     {
@@ -977,7 +1004,7 @@ class User extends XFCP_User
     }
 
     /**
-     * @return mixed
+     * @return integer[]
      */
     protected function calcThucAlbumAggregates()
     {
@@ -1077,7 +1104,7 @@ class User extends XFCP_User
     }
 
     /**
-     * @return mixed
+     * @return integer[]
      */
     protected function calcThucXFMGRatingsGivenAggregates()
     {
@@ -1110,7 +1137,7 @@ class User extends XFCP_User
     }
 
     /**
-     * @return mixed
+     * @return integer[]
      */
     protected function calcThucMediaItemAggregates()
     {
@@ -1219,7 +1246,7 @@ class User extends XFCP_User
     }
 
     /**
-     * @return mixed
+     * @return integer[]
      */
     protected function calcThucResourceCategoryAggregates()
     {
@@ -1256,7 +1283,7 @@ class User extends XFCP_User
     }
 
     /**
-     * @return mixed
+     * @return integer[]
      */
     protected function calcThucMediaCategoryAggregates()
     {
@@ -1284,7 +1311,7 @@ class User extends XFCP_User
     }
 
     /**
-     * @return mixed
+     * @return integer[]
      */
     protected function calcThucReceivedReactionAggregates()
     {

@@ -415,6 +415,24 @@
 		</xf:optgroup>
 
 		<xf:optgroup label="{{ phrase('posts:') }}">
+			<xf:set var="$fieldNamePostDays" value="{$xf.options.thusercriteria_prefix}posts_days" />
+			<xf:option name="user_criteria[{$fieldNamePostDays}][rule]" value="{$fieldNamePostDays}" selected="{$criteria.{$fieldNamePostDays}}"
+					   label="{{ phrase('thusercriteria_user_has_posted_at_least_x_posts_in_the_last_y_days:') }}">
+				<xf:numberbox name="user_criteria[{$fieldNamePostDays}][data][posts]" value="{$criteria.{$fieldNamePostDays}.posts}"
+							  size="5" min="0" step="1" units="{{ phrase('posts') }}" />
+				<xf:numberbox name="user_criteria[{$fieldNamePostDays}][data][days]" value="{$criteria.{$fieldNamePostDays}.days}"
+							  size="5" min="0" step="1" units="{{ phrase('days') }}" />
+			</xf:option>
+			<xf:set var="$fieldNameMaxPostDays" value="{$xf.options.thusercriteria_prefix}max_posts_days" />
+			<xf:option name="user_criteria[{$fieldNameMaxPostDays}][rule]" value="{$fieldNameMaxPostDays}" selected="{$criteria.{$fieldNameMaxPostDays}}"
+					   label="{{ phrase('thusercriteria_user_has_posted_no_more_than_x_posts_in_the_last_y_days:') }}">
+				<xf:numberbox name="user_criteria[{$fieldNameMaxPostDays}][data][posts]" value="{$criteria.{$fieldNameMaxPostDays}.posts}"
+							  size="5" min="0" step="1" units="{{ phrase('posts') }}" />
+				<xf:numberbox name="user_criteria[{$fieldNameMaxPostDays}][data][days]" value="{$criteria.{$fieldNameMaxPostDays}.days}"
+							  size="5" min="0" step="1" units="{{ phrase('days') }}" />
+			</xf:option>
+			
+			
 			<xf:set var="$fieldNameMinForumOneof" value="{$xf.options.thusercriteria_prefix}min_forum_posts_oneof" />
 			<xf:option name="user_criteria[{$fieldNameMinForumOneof}][rule]" value="{$fieldNameMinForumOneof}" selected="{$criteria.{$fieldNameMinForumOneof}}"
 					   label="{{ phrase('thusercriteria_user_has_at_least_x_posts_in_one_of_the_selected_forums:') }}">

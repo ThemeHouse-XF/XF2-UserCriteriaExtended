@@ -1403,6 +1403,24 @@ class CriteriaUser
                 $returnValue = true;
                 break;
 
+            case $prefix . 'age':
+                return $data['years'] <= $user->Profile->age;
+
+            case $prefix . 'max_age':
+                return $data['years'] >= $user->Profile->age;
+
+            case $prefix . 'last_activity':
+                return (\XF::$time - $data['minutes'] * 60) <= $user->last_activity;
+
+            case $prefix . 'max_last_activity':
+                return (\XF::$time - $data['minutes'] * 60) >= $user->last_activity;
+
+            case $prefix . 'posts_days':
+                return $data['posts'] <= $user->getThucPostsDays($data['days']);
+
+            case $prefix . 'max_posts_days':
+                return $data['posts'] >= $user->getThucPostsDays($data['days']);
+
             default:
                 $prefixLength = strlen($prefix) + 11;
                 if (substr($rule, 0, $prefixLength) === $prefix . 'user_field_') {
