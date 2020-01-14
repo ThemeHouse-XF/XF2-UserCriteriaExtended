@@ -138,6 +138,7 @@ class User extends XFCP_User
 
     /**
      * @param $days
+     * @param array $nodeIds
      * @return integer
      */
     public function getThucPostsDays($days)
@@ -156,6 +157,28 @@ class User extends XFCP_User
         }
 
         return (int)$this->postDaysData[$days];
+    }
+
+    /**
+     * @param $days
+     * @param array $nodes
+     * @return integer
+     */
+    public function getThucPostsDaysForums($days, $nodes = [])
+    {
+        return \XF::db()->fetchOne("
+            SELECT
+                count(*)
+            FROM
+              xf_post AS post
+            LEFT JOIN
+              xf_thread AS thread USING(thread_id)
+            WHERE
+              post.user_id = ?
+              AND post.message_state = 'visible'
+              AND post.post_date >= ?
+              AND thread.node_id IN(" . join(',', $nodes) . ")
+        ", [$this->user_id, \XF::$time - 60 * 60 * 24 * $days]);
     }
 
     /**

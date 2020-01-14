@@ -432,7 +432,6 @@
 							  size="5" min="0" step="1" units="{{ phrase('days') }}" />
 			</xf:option>
 			
-			
 			<xf:set var="$fieldNameMinForumOneof" value="{$xf.options.thusercriteria_prefix}min_forum_posts_oneof" />
 			<xf:option name="user_criteria[{$fieldNameMinForumOneof}][rule]" value="{$fieldNameMinForumOneof}" selected="{$criteria.{$fieldNameMinForumOneof}}"
 					   label="{{ phrase('thusercriteria_user_has_at_least_x_posts_in_one_of_the_selected_forums:') }}">
@@ -446,7 +445,6 @@
 					</xf:foreach>
 				</xf:select>
 			</xf:option>
-
 			<xf:set var="$fieldNameMaxForumOneof" value="{$xf.options.thusercriteria_prefix}max_forum_posts_oneof" />
 			<xf:option name="user_criteria[{$fieldNameMaxForumOneof}][rule]" value="{$fieldNameMaxForumOneof}" selected="{$criteria.{$fieldNameMaxForumOneof}}"
 					   label="{{ phrase('thusercriteria_user_has_no_more_than_x_posts_in_one_of_the_selected_forums:') }}">
@@ -474,7 +472,6 @@
 					</xf:foreach>
 				</xf:select>
 			</xf:option>
-
 			<xf:set var="$fieldNameMaxForumCombined" value="{$xf.options.thusercriteria_prefix}max_forum_posts_combined" />
 			<xf:option name="user_criteria[{$fieldNameMaxForumCombined}][rule]" value="{$fieldNameMaxForumCombined}" selected="{$criteria.{$fieldNameMaxForumCombined}}"
 					   label="{{ phrase('thusercriteria_user_has_no_more_than_x_posts_in_all_selected_forums_combined:') }}">
@@ -502,7 +499,6 @@
 					</xf:foreach>
 				</xf:select>
 			</xf:option>
-
 			<xf:set var="$fieldNameMaxForumEach" value="{$xf.options.thusercriteria_prefix}max_forum_posts_each" />
 			<xf:option name="user_criteria[{$fieldNameMaxForumEach}][rule]" value="{$fieldNameMaxForumEach}" selected="{$criteria.{$fieldNameMaxForumEach}}"
 					   label="{{ phrase('thusercriteria_user_has_no_more_than_x_posts_in_each_of_the_selected_forums:') }}">
@@ -516,6 +512,44 @@
 					</xf:foreach>
 				</xf:select>
 			</xf:option>
+			
+			<xf:set var="$fieldNamePostDaysForums" value="{$xf.options.thusercriteria_prefix}posts_days_forums" />
+			<xf:option name="user_criteria[{$fieldNamePostDaysForums}][rule]" value="{$fieldNamePostDaysForums}"
+					   selected="{$criteria.{$fieldNamePostDaysForums}}"
+					   label="{{ phrase('thusercriteria_user_has_posted_at_least_x_posts_in_the_last_y_days_in_the_following_nodes:') }}">
+				<xf:numberbox name="user_criteria[{$fieldNamePostDaysForums}][data][posts]"
+							  value="{$criteria.{$fieldNamePostDaysForums}.posts}"
+							  size="5" min="0" step="1" units="{{ phrase('posts') }}" />
+				<xf:numberbox name="user_criteria[{$fieldNamePostDaysForums}][data][days]"
+							  value="{$criteria.{$fieldNamePostDaysForums}.days}"
+							  size="5" min="0" step="1" units="{{ phrase('days') }}" />
+				<xf:select name="user_criteria[{$fieldNamePostDaysForums}][data][nodes]"
+						   multiple="true"
+						   value="{$criteria.{$fieldNamePostDaysForums}.nodes}">
+					<xf:foreach loop="$__globals.nodes" value="$node">
+						<xf:option disabled="{$node.disabled}" value="{$node.value}">{$node.label}</xf:option>
+					</xf:foreach>
+				</xf:select>
+			</xf:option>
+			<xf:set var="$fieldNameMaxPostDaysForums" value="{$xf.options.thusercriteria_prefix}max_posts_days_forums" />
+			<xf:option name="user_criteria[{$fieldNameMaxPostDaysForums}][rule]" value="{$fieldNameMaxPostDaysForums}"
+					   selected="{$criteria.{$fieldNameMaxPostDaysForums}}"
+					   label="{{ phrase('thusercriteria_user_has_posted_no_more_than_x_posts_in_the_last_y_days_in_the_following_nodes:') }}">
+				<xf:numberbox name="user_criteria[{$fieldNameMaxPostDaysForums}][data][posts]"
+							  value="{$criteria.{$fieldNameMaxPostDaysForums}.posts}"
+							  size="5" min="0" step="1" units="{{ phrase('posts') }}" />
+				<xf:numberbox name="user_criteria[{$fieldNameMaxPostDaysForums}][data][days]"
+							  value="{$criteria.{$fieldNameMaxPostDaysForums}.days}"
+							  size="5" min="0" step="1" units="{{ phrase('days') }}" />
+				<xf:select name="user_criteria[{$fieldNameMaxPostDaysForums}][data][nodes]"
+						   multiple="true"
+						   value="{$criteria.{$fieldNameMaxPostDaysForums}.nodes}">
+					<xf:foreach loop="$__globals.nodes" value="$node">
+						<xf:option disabled="{$node.disabled}" value="{$node.value}">{$node.label}</xf:option>
+					</xf:foreach>
+				</xf:select>
+			</xf:option>
+			
 			<xf:set var="$fieldNameMinPostsInThreads" value="{$xf.options.thusercriteria_prefix}min_posts_in_threads" />
 			<xf:option name="user_criteria[{$fieldNameMinPostsInThreads}][rule]" value="{$fieldNameMinPostsInThreads}"
 					   data-xf-init="disabler"
@@ -558,7 +592,6 @@
 					</ul>
 				</xf:html>
 			</xf:option>
-
 			<xf:set var="$fieldNameMaxPostsInThreads" value="{$xf.options.thusercriteria_prefix}max_posts_in_threads" />
 			<xf:option name="user_criteria[{$fieldNameMaxPostsInThreads}][rule]" value="{$fieldNameMaxPostsInThreads}"
 					   data-xf-init="disabler"

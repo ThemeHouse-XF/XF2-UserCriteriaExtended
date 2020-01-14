@@ -1421,6 +1421,26 @@ class CriteriaUser
             case $prefix . 'max_posts_days':
                 return $data['posts'] >= $user->getThucPostsDays($data['days']);
 
+            case $prefix . 'posts_days_forums':
+                return $data['posts'] <= $user->getThucPostsDaysForums($data['days'], $data['nodes']);
+
+            case $prefix . 'max_posts_days_forums':
+                return $data['posts'] >= $user->getThucPostsDaysForums($data['days'], $data['nodes']);
+
+            case $prefix . 'registered_before_date':
+                $date = strtotime($data['date']);
+                if ($user->register_date <= $date) {
+                    $returnValue = true;
+                }
+                break;
+
+            case $prefix . 'registered_after_date':
+                $date = strtotime($data['date']);
+                if ($user->register_date >= $date) {
+                    $returnValue = true;
+                }
+                break;
+
             default:
                 $prefixLength = strlen($prefix) + 11;
                 if (substr($rule, 0, $prefixLength) === $prefix . 'user_field_') {
@@ -1556,14 +1576,12 @@ class CriteriaUser
                 }
                 break;
 
-
             case 'date-month-equals':
                 $date = explode('-', $value);
                 if (+$date[1] === +$data['month']) {
                     $returnValue = true;
                 }
                 break;
-
 
             case 'date-year-equals':
                 $date = explode('-', $value);
@@ -1584,6 +1602,82 @@ class CriteriaUser
                 $date = strtotime($value);
                 $target = strtotime($data['date']);
                 if ($date > $target) {
+                    $returnValue = true;
+                }
+                break;
+
+            case 'date-days-past':
+                $date = strtotime($value);
+                if ($date > \XF::$time) {
+                    break;
+                }
+                $difference = abs(floor(\XF::$time - $date / 86400));
+
+                if ($difference >= $data['days']) {
+                    $returnValue = true;
+                }
+                break;
+
+            case 'date-max-days-past':
+                $date = strtotime($value);
+                if ($date > \XF::$time) {
+                    break;
+                }
+                $difference = abs(floor(\XF::$time - $date / 86400));
+
+                if ($difference <= $data['days']) {
+                    $returnValue = true;
+                }
+                break;
+
+            case 'date-days-future':
+                $date = strtotime($value);
+                if ($date < \XF::$time) {
+                    break;
+                }
+                $difference = abs(floor(\XF::$time - $date / 86400));
+
+                if ($difference >= $data['days']) {
+                    $returnValue = true;
+                }
+                break;
+
+            case 'date-max-days-future':
+                $date = strtotime($value);
+                if ($date < \XF::$time) {
+                    break;
+                }
+                $difference = abs(floor(\XF::$time - $date / 86400));
+
+                if ($difference <= $data['days']) {
+                    $returnValue = true;
+                }
+                break;
+
+            case 'url-http':
+                if (parse_url($value, PHP_URL_SCHEME) === 'http') {
+                    $returnValue = true;
+                }
+                break;
+
+            case 'url-https':
+                if (parse_url($value, PHP_URL_SCHEME) === 'https') {
+                    $returnValue = true;
+                }
+                break;
+
+            case 'url-tld':
+                $tld = end(explode(".", parse_url($value, PHP_URL_HOST)));
+                $tlds = array_map('trim', explode(',', $data['domains']));
+                if (in_array($tld, $tlds)) {
+                    $returnValue = true;
+                }
+                break;
+
+            case 'url-not-tld':
+                $tld = end(explode(".", parse_url($value, PHP_URL_HOST)));
+                $tlds = array_map('trim', explode(',', $data['domains']));
+                if (!in_array($tld, $tlds)) {
                     $returnValue = true;
                 }
                 break;
