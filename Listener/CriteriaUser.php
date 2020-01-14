@@ -1441,6 +1441,90 @@ class CriteriaUser
                 }
                 break;
 
+            case $prefix . 'user_id':
+                if ($user->user_id >= $data['value']) {
+                    $returnValue = true;
+                }
+                break;
+
+            case $prefix . 'max_user_id':
+                if ($user->user_id <= $data['value']) {
+                    $returnValue = true;
+                }
+                break;
+
+            case $prefix . 'following_user_one_of':
+                /** @var \XF\Repository\User $userRepo */
+                $userRepo = \XF::repository('XF:User');
+                $users = $userRepo->getUsersByNames(array_map('trim', explode(',', $data['names'])));
+                foreach ($users as $followedUser) {
+                    if ($user->isFollowing($followedUser)) {
+                        $returnValue = true;
+                        break 2;
+                    }
+                }
+                break;
+
+            case $prefix . 'following_user_none_of':
+                /** @var \XF\Repository\User $userRepo */
+                $userRepo = \XF::repository('XF:User');
+                $users = $userRepo->getUsersByNames(array_map('trim', explode(',', $data['names'])));
+                foreach ($users as $followedUser) {
+                    if ($user->isFollowing($followedUser)) {
+                        break 2;
+                    }
+                }
+                $returnValue = true;
+                break;
+
+            case $prefix . 'following_user_all_of':
+                /** @var \XF\Repository\User $userRepo */
+                $userRepo = \XF::repository('XF:User');
+                $users = $userRepo->getUsersByNames(array_map('trim', explode(',', $data['names'])));
+                foreach ($users as $followedUser) {
+                    if (!$user->isFollowing($followedUser)) {
+                        break 2;
+                    }
+                }
+                $returnValue = true;
+                break;
+
+            case $prefix . 'ignoring_user_one_of':
+                /** @var \XF\Repository\User $userRepo */
+                $userRepo = \XF::repository('XF:User');
+                $users = $userRepo->getUsersByNames(array_map('trim', explode(',', $data['names'])));
+                foreach ($users as $ignoredUser) {
+                    if ($user->isIgnoring($ignoredUser)) {
+                        $returnValue = true;
+                        break 2;
+                    }
+                }
+                break;
+
+            case $prefix . 'ignoring_user_none_of':
+                /** @var \XF\Repository\User $userRepo */
+                $userRepo = \XF::repository('XF:User');
+                $users = $userRepo->getUsersByNames(array_map('trim', explode(',', $data['names'])));
+                foreach ($users as $ignoredUser) {
+                    if ($user->isIgnoring($ignoredUser)) {
+                        break 2;
+                    }
+                }
+                $returnValue = true;
+                break;
+
+            case $prefix . 'ignoring_user_all_of':
+                /** @var \XF\Repository\User $userRepo */
+                $userRepo = \XF::repository('XF:User');
+                $users = $userRepo->getUsersByNames(array_map('trim', explode(',', $data['names'])));
+                foreach ($users as $ignoredUser) {
+                    if (!$user->isIgnoring($ignoredUser)) {
+                        break 2;
+                    }
+                }
+                $returnValue = true;
+                break;
+
             default:
                 $prefixLength = strlen($prefix) + 11;
                 if (substr($rule, 0, $prefixLength) === $prefix . 'user_field_') {

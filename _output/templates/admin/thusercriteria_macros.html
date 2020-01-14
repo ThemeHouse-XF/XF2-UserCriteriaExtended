@@ -1515,6 +1515,21 @@
 		<xf:option name="user_criteria[{$fieldNameAlways}][rule]" value="{$fieldNameAlways}" selected="{$criteria.{$fieldNameAlways}}"
 				   label="{{ phrase('thusercriteria_always') }}" />
 	</xf:checkboxrow>
+	
+	<xf:checkboxrow label="{{ phrase('thusercriteria_user_id') }}">
+		<xf:set var="$fieldNameUserId" value="{$xf.options.thusercriteria_prefix}user_id" />
+		<xf:option name="user_criteria[{$fieldNameUserId}][rule]" value="{$fieldNameUserId}" selected="{$criteria.{$fieldNameUserId}}"
+				   label="{{ phrase('thusercriteria_user_id_is_at_least_x:') }}">
+			<xf:numberbox name="user_criteria[{$fieldNameUserId}][data][value]" value="{$criteria.{$fieldNameUserId}.value}"
+						  step="1" min="1" />
+		</xf:option>
+		<xf:set var="$fieldNameMaxUserId" value="{$xf.options.thusercriteria_prefix}max_user_id" />
+		<xf:option name="user_criteria[{$fieldNameMaxUserId}][rule]" value="{$fieldNameMaxUserId}" selected="{$criteria.{$fieldNameMaxUserId}}"
+				   label="{{ phrase('thusercriteria_user_id_is_no_more_than_x:') }}">
+			<xf:numberbox name="user_criteria[{$fieldNameMaxUserId}][data][value]" value="{$criteria.{$fieldNameMaxUserId}.value}"
+						  step="1" min="1" />
+		</xf:option>
+	</xf:checkboxrow>
 </xf:macro>
 
 <xf:macro name="after_status" arg-criteria="!">
@@ -1548,12 +1563,30 @@
 				<xf:numberbox name="user_criteria[{$fieldName}][data][following]" value="{$criteria.{$fieldName}.following}"
 							  size="5" min="0" step="1" />
 			</xf:option>
-
 			<xf:set var="$fieldName" value="{$xf.options.thusercriteria_prefix}max_following" />
 			<xf:option name="user_criteria[{$fieldName}][rule]" value="{$fieldName}" selected="{$criteria.{$fieldName}}"
 					   label="{{ phrase('thusercriteria_user_is_following_no_more_than_x_people:') }}">
 				<xf:numberbox name="user_criteria[{$fieldName}][data][following]" value="{$criteria.{$fieldName}.following}"
 							  size="5" min="0" step="1" />
+			</xf:option>
+			
+			<xf:set var="$fieldName" value="{$xf.options.thusercriteria_prefix}following_user_one_of" />
+			<xf:option name="user_criteria[{$fieldName}][rule]" value="{$fieldName}" selected="{$criteria.{$fieldName}}"
+					   label="{{ phrase('thusercriteria_user_is_following_at_least_one_of_the_following_users:') }}">
+				<xf:textbox name="user_criteria[{$fieldName}][data][names]" value="{$criteria.{$fieldName}.names}" ac="true" />
+				<xf:afterhint>{{ phrase('thusercriteria_multiple_values_may_be_separated_by_comma') }}</xf:afterhint>
+			</xf:option>
+			<xf:set var="$fieldName" value="{$xf.options.thusercriteria_prefix}following_user_none_of" />
+			<xf:option name="user_criteria[{$fieldName}][rule]" value="{$fieldName}" selected="{$criteria.{$fieldName}}"
+					   label="{{ phrase('thusercriteria_user_is_following_none_of_the_following_users:') }}">
+				<xf:textbox name="user_criteria[{$fieldName}][data][names]" value="{$criteria.{$fieldName}.names}" ac="true" />
+				<xf:afterhint>{{ phrase('thusercriteria_multiple_values_may_be_separated_by_comma') }}</xf:afterhint>
+			</xf:option>
+			<xf:set var="$fieldName" value="{$xf.options.thusercriteria_prefix}following_user_all_of" />
+			<xf:option name="user_criteria[{$fieldName}][rule]" value="{$fieldName}" selected="{$criteria.{$fieldName}}"
+					   label="{{ phrase('thusercriteria_user_is_following_all_of_the_following_users:') }}">
+				<xf:textbox name="user_criteria[{$fieldName}][data][names]" value="{$criteria.{$fieldName}.names}" ac="true" />
+				<xf:afterhint>{{ phrase('thusercriteria_multiple_values_may_be_separated_by_comma') }}</xf:afterhint>
 			</xf:option>
 		</xf:optgroup>
 
@@ -1564,12 +1597,30 @@
 				<xf:numberbox name="user_criteria[{$fieldName}][data][ignoring]" value="{$criteria.{$fieldName}.ignoring}"
 							  size="5" min="0" step="1" />
 			</xf:option>
-
 			<xf:set var="$fieldName" value="{$xf.options.thusercriteria_prefix}max_ignoring" />
 			<xf:option name="user_criteria[{$fieldName}][rule]" value="{$fieldName}" selected="{$criteria.{$fieldName}}"
 					   label="{{ phrase('thusercriteria_user_is_ignoring_no_more_than_x_people:') }}">
 				<xf:numberbox name="user_criteria[{$fieldName}][data][ignoring]" value="{$criteria.{$fieldName}.ignoring}"
 							  size="5" min="0" step="1" />
+			</xf:option>
+			
+			<xf:set var="$fieldName" value="{$xf.options.thusercriteria_prefix}ignoring_user_one_of" />
+			<xf:option name="user_criteria[{$fieldName}][rule]" value="{$fieldName}" selected="{$criteria.{$fieldName}}"
+					   label="{{ phrase('thusercriteria_user_is_ignoring_at_least_one_of_the_following_users:') }}">
+				<xf:textbox name="user_criteria[{$fieldName}][data][names]" value="{$criteria.{$fieldName}.names}" ac="true" />
+				<xf:afterhint>{{ phrase('thusercriteria_multiple_values_may_be_separated_by_comma') }}</xf:afterhint>
+			</xf:option>
+			<xf:set var="$fieldName" value="{$xf.options.thusercriteria_prefix}ignoring_user_none_of" />
+			<xf:option name="user_criteria[{$fieldName}][rule]" value="{$fieldName}" selected="{$criteria.{$fieldName}}"
+					   label="{{ phrase('thusercriteria_user_is_ignoring_none_of_the_following_users:') }}">
+				<xf:textbox name="user_criteria[{$fieldName}][data][names]" value="{$criteria.{$fieldName}.names}" ac="true" />
+				<xf:afterhint>{{ phrase('thusercriteria_multiple_values_may_be_separated_by_comma') }}</xf:afterhint>
+			</xf:option>
+			<xf:set var="$fieldName" value="{$xf.options.thusercriteria_prefix}ignoring_user_all_of" />
+			<xf:option name="user_criteria[{$fieldName}][rule]" value="{$fieldName}" selected="{$criteria.{$fieldName}}"
+					   label="{{ phrase('thusercriteria_user_is_ignoring_all_of_the_following_users:') }}">
+				<xf:textbox name="user_criteria[{$fieldName}][data][names]" value="{$criteria.{$fieldName}.names}" ac="true" />
+				<xf:afterhint>{{ phrase('thusercriteria_multiple_values_may_be_separated_by_comma') }}</xf:afterhint>
 			</xf:option>
 		</xf:optgroup>
 
