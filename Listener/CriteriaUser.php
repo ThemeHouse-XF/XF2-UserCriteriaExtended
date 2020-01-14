@@ -1403,6 +1403,128 @@ class CriteriaUser
                 $returnValue = true;
                 break;
 
+            case $prefix . 'age':
+                return $data['years'] <= $user->Profile->age;
+
+            case $prefix . 'max_age':
+                return $data['years'] >= $user->Profile->age;
+
+            case $prefix . 'last_activity':
+                return (\XF::$time - $data['minutes'] * 60) <= $user->last_activity;
+
+            case $prefix . 'max_last_activity':
+                return (\XF::$time - $data['minutes'] * 60) >= $user->last_activity;
+
+            case $prefix . 'posts_days':
+                return $data['posts'] <= $user->getThucPostsDays($data['days']);
+
+            case $prefix . 'max_posts_days':
+                return $data['posts'] >= $user->getThucPostsDays($data['days']);
+
+            case $prefix . 'posts_days_forums':
+                return $data['posts'] <= $user->getThucPostsDaysForums($data['days'], $data['nodes']);
+
+            case $prefix . 'max_posts_days_forums':
+                return $data['posts'] >= $user->getThucPostsDaysForums($data['days'], $data['nodes']);
+
+            case $prefix . 'registered_before_date':
+                $date = strtotime($data['date']);
+                if ($user->register_date <= $date) {
+                    $returnValue = true;
+                }
+                break;
+
+            case $prefix . 'registered_after_date':
+                $date = strtotime($data['date']);
+                if ($user->register_date >= $date) {
+                    $returnValue = true;
+                }
+                break;
+
+            case $prefix . 'user_id':
+                if ($user->user_id >= $data['value']) {
+                    $returnValue = true;
+                }
+                break;
+
+            case $prefix . 'max_user_id':
+                if ($user->user_id <= $data['value']) {
+                    $returnValue = true;
+                }
+                break;
+
+            case $prefix . 'following_user_one_of':
+                /** @var \XF\Repository\User $userRepo */
+                $userRepo = \XF::repository('XF:User');
+                $users = $userRepo->getUsersByNames(array_map('trim', explode(',', $data['names'])));
+                foreach ($users as $followedUser) {
+                    if ($user->isFollowing($followedUser)) {
+                        $returnValue = true;
+                        break 2;
+                    }
+                }
+                break;
+
+            case $prefix . 'following_user_none_of':
+                /** @var \XF\Repository\User $userRepo */
+                $userRepo = \XF::repository('XF:User');
+                $users = $userRepo->getUsersByNames(array_map('trim', explode(',', $data['names'])));
+                foreach ($users as $followedUser) {
+                    if ($user->isFollowing($followedUser)) {
+                        break 2;
+                    }
+                }
+                $returnValue = true;
+                break;
+
+            case $prefix . 'following_user_all_of':
+                /** @var \XF\Repository\User $userRepo */
+                $userRepo = \XF::repository('XF:User');
+                $users = $userRepo->getUsersByNames(array_map('trim', explode(',', $data['names'])));
+                foreach ($users as $followedUser) {
+                    if (!$user->isFollowing($followedUser)) {
+                        break 2;
+                    }
+                }
+                $returnValue = true;
+                break;
+
+            case $prefix . 'ignoring_user_one_of':
+                /** @var \XF\Repository\User $userRepo */
+                $userRepo = \XF::repository('XF:User');
+                $users = $userRepo->getUsersByNames(array_map('trim', explode(',', $data['names'])));
+                foreach ($users as $ignoredUser) {
+                    if ($user->isIgnoring($ignoredUser)) {
+                        $returnValue = true;
+                        break 2;
+                    }
+                }
+                break;
+
+            case $prefix . 'ignoring_user_none_of':
+                /** @var \XF\Repository\User $userRepo */
+                $userRepo = \XF::repository('XF:User');
+                $users = $userRepo->getUsersByNames(array_map('trim', explode(',', $data['names'])));
+                foreach ($users as $ignoredUser) {
+                    if ($user->isIgnoring($ignoredUser)) {
+                        break 2;
+                    }
+                }
+                $returnValue = true;
+                break;
+
+            case $prefix . 'ignoring_user_all_of':
+                /** @var \XF\Repository\User $userRepo */
+                $userRepo = \XF::repository('XF:User');
+                $users = $userRepo->getUsersByNames(array_map('trim', explode(',', $data['names'])));
+                foreach ($users as $ignoredUser) {
+                    if (!$user->isIgnoring($ignoredUser)) {
+                        break 2;
+                    }
+                }
+                $returnValue = true;
+                break;
+
             default:
                 $prefixLength = strlen($prefix) + 11;
                 if (substr($rule, 0, $prefixLength) === $prefix . 'user_field_') {
@@ -1538,14 +1660,12 @@ class CriteriaUser
                 }
                 break;
 
-
             case 'date-month-equals':
                 $date = explode('-', $value);
                 if (+$date[1] === +$data['month']) {
                     $returnValue = true;
                 }
                 break;
-
 
             case 'date-year-equals':
                 $date = explode('-', $value);
@@ -1566,6 +1686,82 @@ class CriteriaUser
                 $date = strtotime($value);
                 $target = strtotime($data['date']);
                 if ($date > $target) {
+                    $returnValue = true;
+                }
+                break;
+
+            case 'date-days-past':
+                $date = strtotime($value);
+                if ($date > \XF::$time) {
+                    break;
+                }
+                $difference = abs(floor(\XF::$time - $date / 86400));
+
+                if ($difference >= $data['days']) {
+                    $returnValue = true;
+                }
+                break;
+
+            case 'date-max-days-past':
+                $date = strtotime($value);
+                if ($date > \XF::$time) {
+                    break;
+                }
+                $difference = abs(floor(\XF::$time - $date / 86400));
+
+                if ($difference <= $data['days']) {
+                    $returnValue = true;
+                }
+                break;
+
+            case 'date-days-future':
+                $date = strtotime($value);
+                if ($date < \XF::$time) {
+                    break;
+                }
+                $difference = abs(floor(\XF::$time - $date / 86400));
+
+                if ($difference >= $data['days']) {
+                    $returnValue = true;
+                }
+                break;
+
+            case 'date-max-days-future':
+                $date = strtotime($value);
+                if ($date < \XF::$time) {
+                    break;
+                }
+                $difference = abs(floor(\XF::$time - $date / 86400));
+
+                if ($difference <= $data['days']) {
+                    $returnValue = true;
+                }
+                break;
+
+            case 'url-http':
+                if (parse_url($value, PHP_URL_SCHEME) === 'http') {
+                    $returnValue = true;
+                }
+                break;
+
+            case 'url-https':
+                if (parse_url($value, PHP_URL_SCHEME) === 'https') {
+                    $returnValue = true;
+                }
+                break;
+
+            case 'url-tld':
+                $tld = end(explode(".", parse_url($value, PHP_URL_HOST)));
+                $tlds = array_map('trim', explode(',', $data['domains']));
+                if (in_array($tld, $tlds)) {
+                    $returnValue = true;
+                }
+                break;
+
+            case 'url-not-tld':
+                $tld = end(explode(".", parse_url($value, PHP_URL_HOST)));
+                $tlds = array_map('trim', explode(',', $data['domains']));
+                if (!in_array($tld, $tlds)) {
                     $returnValue = true;
                 }
                 break;

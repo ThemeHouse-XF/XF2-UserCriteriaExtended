@@ -1,0 +1,1 @@
+User has posted no more than X messages in the last Y days in the following nodes

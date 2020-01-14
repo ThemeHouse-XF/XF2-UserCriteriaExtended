@@ -318,14 +318,14 @@
 			<xf:set var="$fieldNameMinReplyMax" value="{$xf.options.thusercriteria_prefix}min_reply_max" />
 			<xf:option name="user_criteria[{$fieldNameMinReplyMax}][rule]" value="{$fieldNameMinReplyMax}" selected="{$criteria.{$fieldNameMinReplyMax}}"
 					   label="{{ phrase('thusercriteria_users_highest_reply_thread_received_at_least_x_replies:') }}">
-				<xf:numberbox name="user_criteria[{$fieldNameMinReplyMax}][data][replies]" value="{$criteria.{$fieldNameMinReplyMax}.threads}"
+				<xf:numberbox name="user_criteria[{$fieldNameMinReplyMax}][data][replies]" value="{$criteria.{$fieldNameMinReplyMax}.replies}"
 							  size="5" min="0" step="1" />
 			</xf:option>
 
 			<xf:set var="$fieldNameMaxReplyMax" value="{$xf.options.thusercriteria_prefix}max_reply_max" />
 			<xf:option name="user_criteria[{$fieldNameMaxReplyMax}][rule]" value="{$fieldNameMaxReplyMax}" selected="{$criteria.{$fieldNameMaxReplyMax}}"
 					   label="{{ phrase('thusercriteria_users_highest_reply_thread_received_no_more_than_x_replies:') }}">
-				<xf:numberbox name="user_criteria[{$fieldNameMaxReplyMax}][data][replies]" value="{$criteria.{$fieldNameMaxReplyMax}.threads}"
+				<xf:numberbox name="user_criteria[{$fieldNameMaxReplyMax}][data][replies]" value="{$criteria.{$fieldNameMaxReplyMax}.replies}"
 							  size="5" min="0" step="1" />
 			</xf:option>
 
@@ -415,6 +415,23 @@
 		</xf:optgroup>
 
 		<xf:optgroup label="{{ phrase('posts:') }}">
+			<xf:set var="$fieldNamePostDays" value="{$xf.options.thusercriteria_prefix}posts_days" />
+			<xf:option name="user_criteria[{$fieldNamePostDays}][rule]" value="{$fieldNamePostDays}" selected="{$criteria.{$fieldNamePostDays}}"
+					   label="{{ phrase('thusercriteria_user_has_posted_at_least_x_posts_in_the_last_y_days:') }}">
+				<xf:numberbox name="user_criteria[{$fieldNamePostDays}][data][posts]" value="{$criteria.{$fieldNamePostDays}.posts}"
+							  size="5" min="0" step="1" units="{{ phrase('posts') }}" />
+				<xf:numberbox name="user_criteria[{$fieldNamePostDays}][data][days]" value="{$criteria.{$fieldNamePostDays}.days}"
+							  size="5" min="0" step="1" units="{{ phrase('days') }}" />
+			</xf:option>
+			<xf:set var="$fieldNameMaxPostDays" value="{$xf.options.thusercriteria_prefix}max_posts_days" />
+			<xf:option name="user_criteria[{$fieldNameMaxPostDays}][rule]" value="{$fieldNameMaxPostDays}" selected="{$criteria.{$fieldNameMaxPostDays}}"
+					   label="{{ phrase('thusercriteria_user_has_posted_no_more_than_x_posts_in_the_last_y_days:') }}">
+				<xf:numberbox name="user_criteria[{$fieldNameMaxPostDays}][data][posts]" value="{$criteria.{$fieldNameMaxPostDays}.posts}"
+							  size="5" min="0" step="1" units="{{ phrase('posts') }}" />
+				<xf:numberbox name="user_criteria[{$fieldNameMaxPostDays}][data][days]" value="{$criteria.{$fieldNameMaxPostDays}.days}"
+							  size="5" min="0" step="1" units="{{ phrase('days') }}" />
+			</xf:option>
+			
 			<xf:set var="$fieldNameMinForumOneof" value="{$xf.options.thusercriteria_prefix}min_forum_posts_oneof" />
 			<xf:option name="user_criteria[{$fieldNameMinForumOneof}][rule]" value="{$fieldNameMinForumOneof}" selected="{$criteria.{$fieldNameMinForumOneof}}"
 					   label="{{ phrase('thusercriteria_user_has_at_least_x_posts_in_one_of_the_selected_forums:') }}">
@@ -428,7 +445,6 @@
 					</xf:foreach>
 				</xf:select>
 			</xf:option>
-
 			<xf:set var="$fieldNameMaxForumOneof" value="{$xf.options.thusercriteria_prefix}max_forum_posts_oneof" />
 			<xf:option name="user_criteria[{$fieldNameMaxForumOneof}][rule]" value="{$fieldNameMaxForumOneof}" selected="{$criteria.{$fieldNameMaxForumOneof}}"
 					   label="{{ phrase('thusercriteria_user_has_no_more_than_x_posts_in_one_of_the_selected_forums:') }}">
@@ -456,7 +472,6 @@
 					</xf:foreach>
 				</xf:select>
 			</xf:option>
-
 			<xf:set var="$fieldNameMaxForumCombined" value="{$xf.options.thusercriteria_prefix}max_forum_posts_combined" />
 			<xf:option name="user_criteria[{$fieldNameMaxForumCombined}][rule]" value="{$fieldNameMaxForumCombined}" selected="{$criteria.{$fieldNameMaxForumCombined}}"
 					   label="{{ phrase('thusercriteria_user_has_no_more_than_x_posts_in_all_selected_forums_combined:') }}">
@@ -484,7 +499,6 @@
 					</xf:foreach>
 				</xf:select>
 			</xf:option>
-
 			<xf:set var="$fieldNameMaxForumEach" value="{$xf.options.thusercriteria_prefix}max_forum_posts_each" />
 			<xf:option name="user_criteria[{$fieldNameMaxForumEach}][rule]" value="{$fieldNameMaxForumEach}" selected="{$criteria.{$fieldNameMaxForumEach}}"
 					   label="{{ phrase('thusercriteria_user_has_no_more_than_x_posts_in_each_of_the_selected_forums:') }}">
@@ -498,6 +512,44 @@
 					</xf:foreach>
 				</xf:select>
 			</xf:option>
+			
+			<xf:set var="$fieldNamePostDaysForums" value="{$xf.options.thusercriteria_prefix}posts_days_forums" />
+			<xf:option name="user_criteria[{$fieldNamePostDaysForums}][rule]" value="{$fieldNamePostDaysForums}"
+					   selected="{$criteria.{$fieldNamePostDaysForums}}"
+					   label="{{ phrase('thusercriteria_user_has_posted_at_least_x_posts_in_the_last_y_days_in_the_following_nodes:') }}">
+				<xf:numberbox name="user_criteria[{$fieldNamePostDaysForums}][data][posts]"
+							  value="{$criteria.{$fieldNamePostDaysForums}.posts}"
+							  size="5" min="0" step="1" units="{{ phrase('posts') }}" />
+				<xf:numberbox name="user_criteria[{$fieldNamePostDaysForums}][data][days]"
+							  value="{$criteria.{$fieldNamePostDaysForums}.days}"
+							  size="5" min="0" step="1" units="{{ phrase('days') }}" />
+				<xf:select name="user_criteria[{$fieldNamePostDaysForums}][data][nodes]"
+						   multiple="true"
+						   value="{$criteria.{$fieldNamePostDaysForums}.nodes}">
+					<xf:foreach loop="$__globals.nodes" value="$node">
+						<xf:option disabled="{$node.disabled}" value="{$node.value}">{$node.label}</xf:option>
+					</xf:foreach>
+				</xf:select>
+			</xf:option>
+			<xf:set var="$fieldNameMaxPostDaysForums" value="{$xf.options.thusercriteria_prefix}max_posts_days_forums" />
+			<xf:option name="user_criteria[{$fieldNameMaxPostDaysForums}][rule]" value="{$fieldNameMaxPostDaysForums}"
+					   selected="{$criteria.{$fieldNameMaxPostDaysForums}}"
+					   label="{{ phrase('thusercriteria_user_has_posted_no_more_than_x_posts_in_the_last_y_days_in_the_following_nodes:') }}">
+				<xf:numberbox name="user_criteria[{$fieldNameMaxPostDaysForums}][data][posts]"
+							  value="{$criteria.{$fieldNameMaxPostDaysForums}.posts}"
+							  size="5" min="0" step="1" units="{{ phrase('posts') }}" />
+				<xf:numberbox name="user_criteria[{$fieldNameMaxPostDaysForums}][data][days]"
+							  value="{$criteria.{$fieldNameMaxPostDaysForums}.days}"
+							  size="5" min="0" step="1" units="{{ phrase('days') }}" />
+				<xf:select name="user_criteria[{$fieldNameMaxPostDaysForums}][data][nodes]"
+						   multiple="true"
+						   value="{$criteria.{$fieldNameMaxPostDaysForums}.nodes}">
+					<xf:foreach loop="$__globals.nodes" value="$node">
+						<xf:option disabled="{$node.disabled}" value="{$node.value}">{$node.label}</xf:option>
+					</xf:foreach>
+				</xf:select>
+			</xf:option>
+			
 			<xf:set var="$fieldNameMinPostsInThreads" value="{$xf.options.thusercriteria_prefix}min_posts_in_threads" />
 			<xf:option name="user_criteria[{$fieldNameMinPostsInThreads}][rule]" value="{$fieldNameMinPostsInThreads}"
 					   data-xf-init="disabler"
@@ -540,7 +592,6 @@
 					</ul>
 				</xf:html>
 			</xf:option>
-
 			<xf:set var="$fieldNameMaxPostsInThreads" value="{$xf.options.thusercriteria_prefix}max_posts_in_threads" />
 			<xf:option name="user_criteria[{$fieldNameMaxPostsInThreads}][rule]" value="{$fieldNameMaxPostsInThreads}"
 					   data-xf-init="disabler"
@@ -1456,13 +1507,28 @@
 
 <xf:macro name="top" arg-criteria="!">
 	<xf:checkboxrow label="{{ phrase('thusercriteria_miscellaneous') }}">
-		<xf:set var="$fieldName" value="{$xf.options.thusercriteria_prefix}never" />
-		<xf:option name="user_criteria[{$fieldName}][rule]" value="{$fieldName}" selected="{$criteria.{$fieldName}}"
+		<xf:set var="$fieldNameNever" value="{$xf.options.thusercriteria_prefix}never" />
+		<xf:option name="user_criteria[{$fieldNameNever}][rule]" value="{$fieldNameNever}" selected="{$criteria.{$fieldNameNever}}"
 				   label="{{ phrase('thusercriteria_never') }}" />
 
-		<xf:set var="$fieldName" value="{$xf.options.thusercriteria_prefix}always" />
-		<xf:option name="user_criteria[{$fieldName}][rule]" value="{$fieldName}" selected="{$criteria.{$fieldName}}"
+		<xf:set var="$fieldNameAlways" value="{$xf.options.thusercriteria_prefix}always" />
+		<xf:option name="user_criteria[{$fieldNameAlways}][rule]" value="{$fieldNameAlways}" selected="{$criteria.{$fieldNameAlways}}"
 				   label="{{ phrase('thusercriteria_always') }}" />
+	</xf:checkboxrow>
+	
+	<xf:checkboxrow label="{{ phrase('thusercriteria_user_id') }}">
+		<xf:set var="$fieldNameUserId" value="{$xf.options.thusercriteria_prefix}user_id" />
+		<xf:option name="user_criteria[{$fieldNameUserId}][rule]" value="{$fieldNameUserId}" selected="{$criteria.{$fieldNameUserId}}"
+				   label="{{ phrase('thusercriteria_user_id_is_at_least_x:') }}">
+			<xf:numberbox name="user_criteria[{$fieldNameUserId}][data][value]" value="{$criteria.{$fieldNameUserId}.value}"
+						  step="1" min="1" />
+		</xf:option>
+		<xf:set var="$fieldNameMaxUserId" value="{$xf.options.thusercriteria_prefix}max_user_id" />
+		<xf:option name="user_criteria[{$fieldNameMaxUserId}][rule]" value="{$fieldNameMaxUserId}" selected="{$criteria.{$fieldNameMaxUserId}}"
+				   label="{{ phrase('thusercriteria_user_id_is_no_more_than_x:') }}">
+			<xf:numberbox name="user_criteria[{$fieldNameMaxUserId}][data][value]" value="{$criteria.{$fieldNameMaxUserId}.value}"
+						  step="1" min="1" />
+		</xf:option>
 	</xf:checkboxrow>
 </xf:macro>
 
@@ -1497,12 +1563,30 @@
 				<xf:numberbox name="user_criteria[{$fieldName}][data][following]" value="{$criteria.{$fieldName}.following}"
 							  size="5" min="0" step="1" />
 			</xf:option>
-
 			<xf:set var="$fieldName" value="{$xf.options.thusercriteria_prefix}max_following" />
 			<xf:option name="user_criteria[{$fieldName}][rule]" value="{$fieldName}" selected="{$criteria.{$fieldName}}"
 					   label="{{ phrase('thusercriteria_user_is_following_no_more_than_x_people:') }}">
 				<xf:numberbox name="user_criteria[{$fieldName}][data][following]" value="{$criteria.{$fieldName}.following}"
 							  size="5" min="0" step="1" />
+			</xf:option>
+			
+			<xf:set var="$fieldName" value="{$xf.options.thusercriteria_prefix}following_user_one_of" />
+			<xf:option name="user_criteria[{$fieldName}][rule]" value="{$fieldName}" selected="{$criteria.{$fieldName}}"
+					   label="{{ phrase('thusercriteria_user_is_following_at_least_one_of_the_following_users:') }}">
+				<xf:textbox name="user_criteria[{$fieldName}][data][names]" value="{$criteria.{$fieldName}.names}" ac="true" />
+				<xf:afterhint>{{ phrase('thusercriteria_multiple_values_may_be_separated_by_comma') }}</xf:afterhint>
+			</xf:option>
+			<xf:set var="$fieldName" value="{$xf.options.thusercriteria_prefix}following_user_none_of" />
+			<xf:option name="user_criteria[{$fieldName}][rule]" value="{$fieldName}" selected="{$criteria.{$fieldName}}"
+					   label="{{ phrase('thusercriteria_user_is_following_none_of_the_following_users:') }}">
+				<xf:textbox name="user_criteria[{$fieldName}][data][names]" value="{$criteria.{$fieldName}.names}" ac="true" />
+				<xf:afterhint>{{ phrase('thusercriteria_multiple_values_may_be_separated_by_comma') }}</xf:afterhint>
+			</xf:option>
+			<xf:set var="$fieldName" value="{$xf.options.thusercriteria_prefix}following_user_all_of" />
+			<xf:option name="user_criteria[{$fieldName}][rule]" value="{$fieldName}" selected="{$criteria.{$fieldName}}"
+					   label="{{ phrase('thusercriteria_user_is_following_all_of_the_following_users:') }}">
+				<xf:textbox name="user_criteria[{$fieldName}][data][names]" value="{$criteria.{$fieldName}.names}" ac="true" />
+				<xf:afterhint>{{ phrase('thusercriteria_multiple_values_may_be_separated_by_comma') }}</xf:afterhint>
 			</xf:option>
 		</xf:optgroup>
 
@@ -1513,12 +1597,30 @@
 				<xf:numberbox name="user_criteria[{$fieldName}][data][ignoring]" value="{$criteria.{$fieldName}.ignoring}"
 							  size="5" min="0" step="1" />
 			</xf:option>
-
 			<xf:set var="$fieldName" value="{$xf.options.thusercriteria_prefix}max_ignoring" />
 			<xf:option name="user_criteria[{$fieldName}][rule]" value="{$fieldName}" selected="{$criteria.{$fieldName}}"
 					   label="{{ phrase('thusercriteria_user_is_ignoring_no_more_than_x_people:') }}">
 				<xf:numberbox name="user_criteria[{$fieldName}][data][ignoring]" value="{$criteria.{$fieldName}.ignoring}"
 							  size="5" min="0" step="1" />
+			</xf:option>
+			
+			<xf:set var="$fieldName" value="{$xf.options.thusercriteria_prefix}ignoring_user_one_of" />
+			<xf:option name="user_criteria[{$fieldName}][rule]" value="{$fieldName}" selected="{$criteria.{$fieldName}}"
+					   label="{{ phrase('thusercriteria_user_is_ignoring_at_least_one_of_the_following_users:') }}">
+				<xf:textbox name="user_criteria[{$fieldName}][data][names]" value="{$criteria.{$fieldName}.names}" ac="true" />
+				<xf:afterhint>{{ phrase('thusercriteria_multiple_values_may_be_separated_by_comma') }}</xf:afterhint>
+			</xf:option>
+			<xf:set var="$fieldName" value="{$xf.options.thusercriteria_prefix}ignoring_user_none_of" />
+			<xf:option name="user_criteria[{$fieldName}][rule]" value="{$fieldName}" selected="{$criteria.{$fieldName}}"
+					   label="{{ phrase('thusercriteria_user_is_ignoring_none_of_the_following_users:') }}">
+				<xf:textbox name="user_criteria[{$fieldName}][data][names]" value="{$criteria.{$fieldName}.names}" ac="true" />
+				<xf:afterhint>{{ phrase('thusercriteria_multiple_values_may_be_separated_by_comma') }}</xf:afterhint>
+			</xf:option>
+			<xf:set var="$fieldName" value="{$xf.options.thusercriteria_prefix}ignoring_user_all_of" />
+			<xf:option name="user_criteria[{$fieldName}][rule]" value="{$fieldName}" selected="{$criteria.{$fieldName}}"
+					   label="{{ phrase('thusercriteria_user_is_ignoring_all_of_the_following_users:') }}">
+				<xf:textbox name="user_criteria[{$fieldName}][data][names]" value="{$criteria.{$fieldName}.names}" ac="true" />
+				<xf:afterhint>{{ phrase('thusercriteria_multiple_values_may_be_separated_by_comma') }}</xf:afterhint>
 			</xf:option>
 		</xf:optgroup>
 
