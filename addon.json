@@ -10,5 +10,6 @@
     "support_url": "https://www.themehouse.com/help",
     "extra_urls": [],
     "require": [],
-    "icon": "icon.png"
+    "icon": "icon.png",
+    "composer_autoload": "vendor/composer"
 }

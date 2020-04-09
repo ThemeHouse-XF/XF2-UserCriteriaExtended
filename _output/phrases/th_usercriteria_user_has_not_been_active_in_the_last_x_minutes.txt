@@ -1,0 +1,1 @@
+User has not been active within the last X minutes
