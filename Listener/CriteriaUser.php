@@ -2,8 +2,10 @@
 
 namespace ThemeHouse\UserCriteria\Listener;
 
+use Carbon\Carbon;
+use League\Uri\UriString;
+use ThemeHouse\UserCriteria\Util\Color;
 use XF\Entity\User;
-use XF\Util\Color;
 
 /**
  * Class CriteriaUser
@@ -49,7 +51,7 @@ class CriteriaUser
                 break;
 
             case $prefix . 'without_website':
-                if (!empty($user->Profile->website)) {
+                if (empty($user->Profile->website)) {
                     $returnValue = true;
                 }
                 break;
@@ -84,13 +86,13 @@ class CriteriaUser
                 }
                 break;
 
-            case $prefix . 'max_reports':
+            case $prefix . 'min_reports':
                 if ($user->thuc_report_count >= $data[$prefix . 'report_count']) {
                     $returnValue = true;
                 }
                 break;
 
-            case $prefix . 'min_reports':
+            case $prefix . 'max_reports':
                 if ($user->thuc_report_count <= $data[$prefix . 'report_count']) {
                     $returnValue = true;
                 }
@@ -120,26 +122,26 @@ class CriteriaUser
                 }
                 break;
 
-            case $prefix . 'max_warnings_recieved':
+            case $prefix . 'min_warnings_recieved':
                 if ($user->thuc_warning_count >= $data[$prefix . 'warn_count']) {
                     $returnValue = true;
                 }
                 break;
 
-            case $prefix . 'min_warnings_recieved':
+            case $prefix . 'max_warnings_recieved':
                 if ($user->thuc_warning_count <= $data[$prefix . 'warn_count']) {
+                    $returnValue = true;
+                }
+                break;
+
+            case $prefix . 'min_warning_points':
+                if ($user->warning_points >= $data[$prefix . 'warn_count']) {
                     $returnValue = true;
                 }
                 break;
 
             case $prefix . 'max_warning_points':
                 if ($user->warning_points <= $data[$prefix . 'warn_count']) {
-                    $returnValue = true;
-                }
-                break;
-
-            case $prefix . 'min_warning_points':
-                if ($user->warning_points > $data[$prefix . 'warn_count']) {
                     $returnValue = true;
                 }
                 break;
@@ -151,12 +153,8 @@ class CriteriaUser
                 break;
 
             case $prefix . 'not_connected_accounts':
-                foreach ($data['provider_ids'] as $providerId) {
-                    if (isset($user->Profile->connected_accounts[$providerId])) {
-                        break 2;
-                    }
-                }
-                $returnValue = true;
+                $returnValue = empty(array_intersect_key(array_flip($data['provider_ids']),
+                    $user->Profile->connected_accounts));
                 break;
 
             case $prefix . 'not_language':
@@ -167,21 +165,21 @@ class CriteriaUser
 
             case $prefix . 'registered_max_days':
                 if ($user->register_date) {
-                    $daysRegistered = floor((time() - $user->register_date) / 86400);
-                    if ($daysRegistered <= $data['days']) {
+                    $registerDate = Carbon::createFromTimestamp($user->register_date);
+                    if ($registerDate->diffInDays() <= $data['days']) {
                         $returnValue = true;
                     }
                 }
                 break;
 
             case $prefix . 'user_title':
-                if ($user->custom_title) {
+                if (!empty($user->custom_title)) {
                     $returnValue = true;
                 }
                 break;
 
             case $prefix . 'no_user_title':
-                if (!$user->custom_title) {
+                if (empty($user->custom_title)) {
                     $returnValue = true;
                 }
                 break;
@@ -280,7 +278,7 @@ class CriteriaUser
                 break;
 
             case $prefix . 'max_bookmarks':
-                if ($user->thuc_bookmark_count < $data['count']) {
+                if ($user->thuc_bookmark_count <= $data['count']) {
                     $returnValue = true;
                 }
                 break;
@@ -383,55 +381,60 @@ class CriteriaUser
 
             case $prefix . 'not_staff':
                 if (!$user->is_staff) {
-                    $returnValue = true;
+                    $returnValue = !$user->is_staff;
                 }
                 break;
 
             case $prefix . 'password_min_age':
-                if (floor((\XF::$time - $user->Profile->password_date) / 86400) >= $data['days']) {
+                $passwordAge = Carbon::createFromTimestamp($user->Profile->password_date);
+                if ($passwordAge->diffInDays() >= $data['days']) {
                     $returnValue = true;
                 }
                 break;
 
             case $prefix . 'password_max_age':
-                if (floor((\XF::$time - $user->Profile->password_date) / 86400) <= $data['days']) {
+                $passwordAge = Carbon::createFromTimestamp($user->Profile->password_date);
+                if ($passwordAge->diffInDays() <= $data['days']) {
                     $returnValue = true;
                 }
                 break;
 
             case $prefix . 'location':
-                if ($user->Profile->location) {
+                if (!empty($user->Profile->location)) {
                     $returnValue = true;
                 }
                 break;
 
             case $prefix . 'not_location':
-                if (!$user->Profile->location) {
+                if (empty($user->Profile->location)) {
                     $returnValue = true;
                 }
                 break;
 
             case $prefix . 'birth_day':
-                $birthday = $user->Profile->getBirthday(true);
-                /** @noinspection PhpUndefinedMethodInspection */
-                if (!empty($birthday['timeStamp']) && $birthday['timeStamp']->format('j') == $data['day']) {
-                    $returnValue = true;
+                if ($birthday = $user->Profile->getBirthday(true)['timeStamp']) {
+                    $birthday = Carbon::createFromTimestamp($birthday);
+                    if ($birthday->day == $data['day']) {
+                        $returnValue = true;
+                    }
                 }
                 break;
 
             case $prefix . 'birth_month':
-                $birthday = $user->Profile->getBirthday(true);
-                /** @noinspection PhpUndefinedMethodInspection */
-                if (!empty($birthday['timeStamp']) && $birthday['timeStamp']->format('n') == $data['month']) {
-                    $returnValue = true;
+                if ($birthday = $user->Profile->getBirthday(true)['timeStamp']) {
+                    $birthday = Carbon::createFromTimestamp($birthday);
+                    if ($birthday->month == $data['day']) {
+                        $returnValue = true;
+                    }
                 }
                 break;
 
             case $prefix . 'birth_year':
-                $birthday = $user->Profile->getBirthday(true);
-                /** @noinspection PhpUndefinedMethodInspection */
-                if (!empty($birthday['timeStamp']) && $birthday['timeStamp']->format('Y') == $data['year']) {
-                    $returnValue = true;
+                if ($birthday = $user->Profile->getBirthday(true)['timeStamp']) {
+                    $birthday = Carbon::createFromTimestamp($birthday);
+                    if ($birthday->year == $data['day']) {
+                        $returnValue = true;
+                    }
                 }
                 break;
 
@@ -460,8 +463,11 @@ class CriteriaUser
                 break;
 
             case $prefix . 'user_upgrade_expiring_in':
-                if ($user->thuc_next_user_upgrade_expiry_date && floor($user->thuc_next_user_upgrade_expiry_date / 86400) <= $data['days']) {
-                    $returnValue = true;
+                if ($timestamp = $user->thuc_next_user_upgrade_expiry_date) {
+                    $expiryDate = Carbon::createFromTimestamp($user->thuc_next_user_upgrade_expiry_date);
+                    if ($expiryDate->diffInDays() <= $data['days']) {
+                        $returnValue = true;
+                    }
                 }
                 break;
 
@@ -1310,7 +1316,7 @@ class CriteriaUser
                 foreach ($data['categories'] as $categoryId) {
                     $total += $user->getThucXfrmResourceCountForCategory($categoryId);
                 }
-                if ($total <= $data['count']) {
+                if ($total >= $data['count']) {
                     $returnValue = true;
                 }
                 break;
@@ -1320,7 +1326,7 @@ class CriteriaUser
                 foreach ($data['categories'] as $categoryId) {
                     $total += $user->getThucXfrmResourceCountForCategory($categoryId);
                 }
-                if ($total >= $data['count']) {
+                if ($total <= $data['count']) {
                     $returnValue = true;
                 }
                 break;
@@ -1368,7 +1374,7 @@ class CriteriaUser
                 foreach ($data['categories'] as $categoryId) {
                     $total += $user->getThucXfmgItemCountForCategory($categoryId);
                 }
-                if ($total <= $data['count']) {
+                if ($total >= $data['count']) {
                     $returnValue = true;
                 }
                 break;
@@ -1378,7 +1384,7 @@ class CriteriaUser
                 foreach ($data['categories'] as $categoryId) {
                     $total += $user->getThucXfmgItemCountForCategory($categoryId);
                 }
-                if ($total >= $data['count']) {
+                if ($total <= $data['count']) {
                     $returnValue = true;
                 }
                 break;
@@ -1404,41 +1410,59 @@ class CriteriaUser
                 break;
 
             case $prefix . 'age':
-                return $data['years'] <= $user->Profile->age;
-
-            case $prefix . 'max_age':
-                return $data['years'] >= $user->Profile->age;
-
-            case $prefix . 'last_activity':
-                return (\XF::$time - $data['minutes'] * 60) <= $user->last_activity;
-
-            case $prefix . 'max_last_activity':
-                return (\XF::$time - $data['minutes'] * 60) >= $user->last_activity;
-
-            case $prefix . 'posts_days':
-                return $data['posts'] <= $user->getThucPostsDays($data['days']);
-
-            case $prefix . 'max_posts_days':
-                return $data['posts'] >= $user->getThucPostsDays($data['days']);
-
-            case $prefix . 'posts_days_forums':
-                return $data['posts'] <= $user->getThucPostsDaysForums($data['days'], $data['nodes']);
-
-            case $prefix . 'max_posts_days_forums':
-                return $data['posts'] >= $user->getThucPostsDaysForums($data['days'], $data['nodes']);
-
-            case $prefix . 'registered_before_date':
-                $date = strtotime($data['date']);
-                if ($user->register_date <= $date) {
-                    $returnValue = true;
+                if ($birthday = $user->Profile->getBirthday(true)) {
+                    $birthday = Carbon::createFromTimestamp($birthday);
+                    if ($birthday->diffInYears() >= $user->Profile->age) {
+                        $returnValue = true;
+                    }
                 }
                 break;
 
-            case $prefix . 'registered_after_date':
-                $date = strtotime($data['date']);
-                if ($user->register_date >= $date) {
-                    $returnValue = true;
+            case $prefix . 'max_age':
+                if ($birthday = $user->Profile->getBirthday(true)) {
+                    $birthday = Carbon::createFromTimestamp($birthday);
+                    if ($birthday->diffInYears() <= $user->Profile->age) {
+                        $returnValue = true;
+                    }
                 }
+                break;
+
+            case $prefix . 'last_activity':
+                $lastActivity = Carbon::createFromTimestamp($user->last_activity);
+                $returnValue = $lastActivity->diffInMinutes() >= $data['minutes'];
+                break;
+
+            case $prefix . 'max_last_activity':
+                $lastActivity = Carbon::createFromTimestamp($user->last_activity);
+                $returnValue = $lastActivity->diffInMinutes() <= $data['minutes'];
+                break;
+
+            case $prefix . 'posts_days':
+                $returnValue = $data['posts'] <= $user->getThucPostsDays($data['days']);
+                break;
+
+            case $prefix . 'max_posts_days':
+                $returnValue = $data['posts'] >= $user->getThucPostsDays($data['days']);
+                break;
+
+            case $prefix . 'posts_days_forums':
+                $returnValue = $data['posts'] <= $user->getThucPostsDaysForums($data['days'], $data['nodes']);
+                break;
+
+            case $prefix . 'max_posts_days_forums':
+                $returnValue = $data['posts'] >= $user->getThucPostsDaysForums($data['days'], $data['nodes']);
+                break;
+
+            case $prefix . 'registered_before_date':
+                $registerDate = Carbon::createFromTimestamp($user->register_date);
+                $date = new Carbon($data['date']);
+                $returnValue = $registerDate->isBefore($date);
+                break;
+
+            case $prefix . 'registered_after_date':
+                $registerDate = Carbon::createFromTimestamp($user->register_date);
+                $date = new Carbon($data['date']);
+                $returnValue = $registerDate->isAfter($date);
                 break;
 
             case $prefix . 'user_id':
@@ -1606,152 +1630,103 @@ class CriteriaUser
                 break;
 
             case 'color-red-above':
-                $color = self::parseColor($value);
-
-                if ($color[0] > $data['value']) {
+                if (Color::isValidColor($value) && Color::getRedValue($value) > $data['value']) {
                     $returnValue = true;
                 }
                 break;
 
             case 'color-green-above':
-                $color = self::parseColor($value);
-
-                if ($color[1] > $data['value']) {
+                if (Color::isValidColor($value) && Color::getGreenValue($value)  > $data['value']) {
                     $returnValue = true;
                 }
                 break;
 
             case 'color-blue-above':
-                $color = self::parseColor($value);
-
-                if ($color[2] > $data['value']) {
+                if (Color::isValidColor($value) && Color::getBlueValue($value)  > $data['value']) {
                     $returnValue = true;
                 }
                 break;
 
             case 'color-red-below':
-                $color = self::parseColor($value);
-
-                if ($color[0] < $data['value']) {
+                if (Color::isValidColor($value) && Color::getRedValue($value)  < $data['value']) {
                     $returnValue = true;
                 }
                 break;
 
             case 'color-green-below':
-                $color = self::parseColor($value);
-
-                if ($color[1] < $data['value']) {
+                if (Color::isValidColor($value) && Color::getGreenValue($value)  < $data['value']) {
                     $returnValue = true;
                 }
                 break;
 
             case 'color-blue-below':
-                $color = self::parseColor($value);
-
-                if ($color[2] < $data['value']) {
+                if (Color::isValidColor($value) && Color::getBlueValue($value)  < $data['value']) {
                     $returnValue = true;
                 }
                 break;
 
             case 'date-day-equals':
-                $date = explode('-', $value);
-                if (+$date[2] === +$data['day']) {
-                    $returnValue = true;
-                }
+                $date = new Carbon($value);
+                $returnValue = $date->day == +$data['day'];
                 break;
 
             case 'date-month-equals':
-                $date = explode('-', $value);
-                if (+$date[1] === +$data['month']) {
-                    $returnValue = true;
-                }
+                $date = new Carbon($value);
+                $returnValue = $date->month == +$data['month'];
                 break;
 
             case 'date-year-equals':
-                $date = explode('-', $value);
-                if (+$date[0] === +$data['year']) {
-                    $returnValue = true;
-                }
+                $date = new Carbon($value);
+                $returnValue = $date->year == +$data['year'];
                 break;
 
             case 'date-before':
-                $date = strtotime($value);
-                $target = strtotime($data['date']);
-                if ($date < $target) {
-                    $returnValue = true;
-                }
+                $date = new Carbon($value);
+                $target = new Carbon($data['date']);
+                $returnValue = $date->isBefore($target);
                 break;
 
             case 'date-after':
-                $date = strtotime($value);
-                $target = strtotime($data['date']);
-                if ($date > $target) {
-                    $returnValue = true;
-                }
+                $date = new Carbon($value);
+                $target = new Carbon($data['date']);
+                $returnValue = $date->isAfter($target);
                 break;
 
             case 'date-days-past':
-                $date = strtotime($value);
-                if ($date > \XF::$time) {
-                    break;
-                }
-                $difference = abs(floor(\XF::$time - $date / 86400));
-
-                if ($difference >= $data['days']) {
-                    $returnValue = true;
-                }
+                $date = new Carbon($value);
+                $returnValue = $date->isPast() && $date->diffInDays() >= $data['days'];
                 break;
 
             case 'date-max-days-past':
-                $date = strtotime($value);
-                if ($date > \XF::$time) {
-                    break;
-                }
-                $difference = abs(floor(\XF::$time - $date / 86400));
-
-                if ($difference <= $data['days']) {
-                    $returnValue = true;
-                }
+                $date = new Carbon($value);
+                $returnValue = $date->isPast() && $date->diffInDays() <= $data['days'];
                 break;
 
             case 'date-days-future':
-                $date = strtotime($value);
-                if ($date < \XF::$time) {
-                    break;
-                }
-                $difference = abs(floor(\XF::$time - $date / 86400));
-
-                if ($difference >= $data['days']) {
-                    $returnValue = true;
-                }
+                $date = new Carbon($value);
+                $returnValue = $date->isFuture() && $date->diffInDays() >= $data['days'];
                 break;
 
             case 'date-max-days-future':
-                $date = strtotime($value);
-                if ($date < \XF::$time) {
-                    break;
-                }
-                $difference = abs(floor(\XF::$time - $date / 86400));
-
-                if ($difference <= $data['days']) {
-                    $returnValue = true;
-                }
+                $date = new Carbon($value);
+                $returnValue = $date->isFuture() && $date->diffInDays() <= $data['days'];
                 break;
 
             case 'url-http':
-                if (parse_url($value, PHP_URL_SCHEME) === 'http') {
+                if (UriString::parse($value)['scheme'] === 'http') {
                     $returnValue = true;
                 }
                 break;
 
             case 'url-https':
-                if (parse_url($value, PHP_URL_SCHEME) === 'https') {
+                if (UriString::parse($value)['scheme'] === 'https') {
                     $returnValue = true;
                 }
                 break;
 
             case 'url-tld':
-                $tld = end(explode(".", parse_url($value, PHP_URL_HOST)));
+                $domain = explode('.', UriString::parse($value)['host']);
+                $tld = end($domain);
                 $tlds = array_map('trim', explode(',', $data['domains']));
                 if (in_array($tld, $tlds)) {
                     $returnValue = true;
@@ -1759,7 +1734,8 @@ class CriteriaUser
                 break;
 
             case 'url-not-tld':
-                $tld = end(explode(".", parse_url($value, PHP_URL_HOST)));
+                $domain = explode('.', UriString::parse($value)['host']);
+                $tld = end($domain);
                 $tlds = array_map('trim', explode(',', $data['domains']));
                 if (!in_array($tld, $tlds)) {
                     $returnValue = true;
@@ -1768,31 +1744,6 @@ class CriteriaUser
 
             default:
                 break;
-        }
-    }
-
-    /**
-     * @param $color
-     * @return array
-     */
-    protected static function parseColor($color)
-    {
-        if (@preg_match('/\#([0-9A-F]{3,6})/xi', $color, $matches)) {
-            return Color::hexToRgb($matches[1]);
-        }
-        if (@preg_match('/rgba?\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})/xi', $color, $matches)) {
-            return [$matches[1], $matches[2], $matches[3]];
-        } elseif (@preg_match('/hsl\(([0-2]?[0-9]?[0-9]|3[0-5][0-9]|360)\s*,([0-9]?[0-9]|100)%\s*,([0-9]?[0-9]|100)%/xi',
-            $color, $matches)) {
-            return Color::hslToRgb($matches[1], $matches[2], $matches[3]);
-        } else {
-            $namedColors = Color::getNamedColors();
-
-            if (isset($namedColors[$color])) {
-                return self::parseColor($namedColors[$color]);
-            } else {
-                return [0, 0, 0];
-            }
         }
     }
 }
