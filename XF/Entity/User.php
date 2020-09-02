@@ -554,7 +554,7 @@ class User extends XFCP_User
                 , array_fill(0, $userIdCount, $this->user_id));
 
             if (is_array($aggregates)) {
-                $aggregates = array_map('intval', $this->thuc_user_criteria_cache['watch']);
+                $aggregates = array_map('intval', $aggregates);
             } else {
                 $aggregates = [
                     'forums' => 0,
