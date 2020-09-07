@@ -846,116 +846,140 @@ class CriteriaUser
                 break;
 
             case $prefix . 'min_reactions_received_oneof':
-                foreach ($data['reactions'] as $reactionId) {
-                    if ($user->getThucReceivedReactionCount($reactionId) >= $data['count']) {
-                        $returnValue = true;
-                        break 2;
+                if (!empty($data['reactions'])) {
+                    foreach ($data['reactions'] as $reactionId) {
+                        if ($user->getThucReceivedReactionCount($reactionId) >= $data['count']) {
+                            $returnValue = true;
+                            break 2;
+                        }
                     }
                 }
                 break;
 
             case $prefix . 'max_reactions_received_oneof':
-                foreach ($data['reactions'] as $reactionId) {
-                    if ($user->getThucReceivedReactionCount($reactionId) <= $data['count']) {
-                        $returnValue = true;
-                        break 2;
+                if (!empty($data['reactions'])) {
+                    foreach ($data['reactions'] as $reactionId) {
+                        if ($user->getThucReceivedReactionCount($reactionId) <= $data['count']) {
+                            $returnValue = true;
+                            break 2;
+                        }
                     }
                 }
                 break;
 
             case $prefix . 'min_reactions_given_oneof':
-                foreach ($data['reactions'] as $reactionId) {
-                    if ($user->getThucGivenReactionCount($reactionId) >= $data['count']) {
-                        $returnValue = true;
-                        break 2;
+                if (!empty($data['reactions'])) {
+                    foreach ($data['reactions'] as $reactionId) {
+                        if ($user->getThucGivenReactionCount($reactionId) >= $data['count']) {
+                            $returnValue = true;
+                            break 2;
+                        }
                     }
                 }
                 break;
 
             case $prefix . 'max_reactions_given_oneof':
-                foreach ($data['reactions'] as $reactionId) {
-                    if ($user->getThucGivenReactionCount($reactionId) <= $data['count']) {
-                        $returnValue = true;
-                        break 2;
+                if (!empty($data['reactions'])) {
+                    foreach ($data['reactions'] as $reactionId) {
+                        if ($user->getThucGivenReactionCount($reactionId) <= $data['count']) {
+                            $returnValue = true;
+                            break 2;
+                        }
                     }
                 }
                 break;
 
             case $prefix . 'min_reactions_given_combined':
-                $total = 0;
-                foreach ($data['reactions'] as $reactionId) {
-                    $total += $user->getThucGivenReactionCount($reactionId);
-                }
-                if ($total >= $data['count']) {
-                    $returnValue = true;
+                if (!empty($data['reactions'])) {
+                    $total = 0;
+                    foreach ($data['reactions'] as $reactionId) {
+                        $total += $user->getThucGivenReactionCount($reactionId);
+                    }
+                    if ($total >= $data['count']) {
+                        $returnValue = true;
+                    }
                 }
                 break;
 
             case $prefix . 'max_reactions_given_combined':
-                $total = 0;
-                foreach ($data['reactions'] as $reactionId) {
-                    $total += $user->getThucGivenReactionCount($reactionId);
-                }
-                if ($total <= $data['count']) {
-                    $returnValue = true;
+                if (!empty($data['reactions'])) {
+                    $total = 0;
+                    foreach ($data['reactions'] as $reactionId) {
+                        $total += $user->getThucGivenReactionCount($reactionId);
+                    }
+                    if ($total <= $data['count']) {
+                        $returnValue = true;
+                    }
                 }
                 break;
 
             case $prefix . 'min_reactions_received_combined':
-                $total = 0;
-                foreach ($data['reactions'] as $reactionId) {
-                    $total += $user->getThucReceivedReactionCount($reactionId);
-                }
-                if ($total >= $data['count']) {
-                    $returnValue = true;
+                if (!empty($data['reactions'])) {
+                    $total = 0;
+                    foreach ($data['reactions'] as $reactionId) {
+                        $total += $user->getThucReceivedReactionCount($reactionId);
+                    }
+                    if ($total >= $data['count']) {
+                        $returnValue = true;
+                    }
                 }
                 break;
 
             case $prefix . 'max_reactions_received_combined':
-                $total = 0;
-                foreach ($data['reactions'] as $reactionId) {
-                    $total += $user->getThucReceivedReactionCount($reactionId);
-                }
-                if ($total <= $data['count']) {
-                    $returnValue = true;
+                if (!empty($data['reactions'])) {
+                    $total = 0;
+                    foreach ($data['reactions'] as $reactionId) {
+                        $total += $user->getThucReceivedReactionCount($reactionId);
+                    }
+                    if ($total <= $data['count']) {
+                        $returnValue = true;
+                    }
                 }
                 break;
 
             case $prefix . 'min_reactions_received_each':
-                foreach ($data['reactions'] as $reactionId) {
-                    if ($user->getThucReceivedReactionCount($reactionId) < $data['count']) {
-                        $returnValue = false;
-                        break 2;
+                if (!empty($data['reactions'])) {
+                    foreach ($data['reactions'] as $reactionId) {
+                        if ($user->getThucReceivedReactionCount($reactionId) < $data['count']) {
+                            $returnValue = false;
+                            break 2;
+                        }
                     }
                 }
                 $returnValue = true;
                 break;
 
             case $prefix . 'max_reactions_received_each':
-                foreach ($data['reactions'] as $reactionId) {
-                    if ($user->getThucReceivedReactionCount($reactionId) > $data['count']) {
-                        $returnValue = false;
-                        break 2;
+                if (!empty($data['reactions'])) {
+                    foreach ($data['reactions'] as $reactionId) {
+                        if ($user->getThucReceivedReactionCount($reactionId) > $data['count']) {
+                            $returnValue = false;
+                            break 2;
+                        }
                     }
                 }
                 $returnValue = true;
                 break;
 
             case $prefix . 'min_reactions_given_each':
-                foreach ($data['reactions'] as $reactionId) {
-                    if ($user->getThucGivenReactionCount($reactionId) < $data['count']) {
-                        $returnValue = false;
-                        break 2;
+                if (!empty($data['reactions'])) {
+                    foreach ($data['reactions'] as $reactionId) {
+                        if ($user->getThucGivenReactionCount($reactionId) < $data['count']) {
+                            $returnValue = false;
+                            break 2;
+                        }
                     }
                 }
                 $returnValue = true;
                 break;
 
             case $prefix . 'max_reactions_given_each':
-                foreach ($data['reactions'] as $reactionId) {
-                    if ($user->getThucGivenReactionCount($reactionId) > $data['count']) {
-                        $returnValue = false;
-                        break 2;
+                if (!empty($data['reactions'])) {
+                    foreach ($data['reactions'] as $reactionId) {
+                        if ($user->getThucGivenReactionCount($reactionId) > $data['count']) {
+                            $returnValue = false;
+                            break 2;
+                        }
                     }
                 }
                 $returnValue = true;
@@ -1636,31 +1660,31 @@ class CriteriaUser
                 break;
 
             case 'color-green-above':
-                if (Color::isValidColor($value) && Color::getGreenValue($value)  > $data['value']) {
+                if (Color::isValidColor($value) && Color::getGreenValue($value) > $data['value']) {
                     $returnValue = true;
                 }
                 break;
 
             case 'color-blue-above':
-                if (Color::isValidColor($value) && Color::getBlueValue($value)  > $data['value']) {
+                if (Color::isValidColor($value) && Color::getBlueValue($value) > $data['value']) {
                     $returnValue = true;
                 }
                 break;
 
             case 'color-red-below':
-                if (Color::isValidColor($value) && Color::getRedValue($value)  < $data['value']) {
+                if (Color::isValidColor($value) && Color::getRedValue($value) < $data['value']) {
                     $returnValue = true;
                 }
                 break;
 
             case 'color-green-below':
-                if (Color::isValidColor($value) && Color::getGreenValue($value)  < $data['value']) {
+                if (Color::isValidColor($value) && Color::getGreenValue($value) < $data['value']) {
                     $returnValue = true;
                 }
                 break;
 
             case 'color-blue-below':
-                if (Color::isValidColor($value) && Color::getBlueValue($value)  < $data['value']) {
+                if (Color::isValidColor($value) && Color::getBlueValue($value) < $data['value']) {
                     $returnValue = true;
                 }
                 break;
