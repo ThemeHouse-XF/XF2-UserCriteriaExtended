@@ -153,8 +153,9 @@ class CriteriaUser
                 break;
 
             case $prefix . 'not_connected_accounts':
-                $returnValue = empty(array_intersect_key(array_flip($data['provider_ids']),
-                    $user->Profile->connected_accounts));
+                if (empty(array_intersect_key(array_flip($data['provider_ids']), $user->Profile->connected_accounts))) {
+                    $returnValue = true;
+                }
                 break;
 
             case $prefix . 'not_language':
@@ -381,7 +382,7 @@ class CriteriaUser
 
             case $prefix . 'not_staff':
                 if (!$user->is_staff) {
-                    $returnValue = !$user->is_staff;
+                    $returnValue = true;
                 }
                 break;
 
@@ -519,7 +520,9 @@ class CriteriaUser
                 }
 
                 $ratio = $user->reaction_score / $user->message_count;
-                $returnValue = $ratio <= $data['ratio'];
+                if ($ratio <= $data['ratio']) {
+                    $returnValue = true;
+                }
                 break;
 
             case $prefix . 'unread_conversations':
@@ -1434,18 +1437,28 @@ class CriteriaUser
                 break;
 
             case $prefix . 'age':
-                if ($birthday = $user->Profile->getBirthday(true)) {
-                    $birthday = Carbon::createFromTimestamp($birthday);
-                    if ($birthday->diffInYears() >= $user->Profile->age) {
+                if ($user->Profile->dob_year && $user->Profile->dob_month && $user->Profile->dob_day) {
+                    $birthday = (new Carbon())
+                        ->setDay($user->Profile->dob_day)
+                        ->setMonth($user->Profile->dob_month)
+                        ->setYear($user->Profile->dob_year)
+                        ->startOfDay();
+
+                    if ($birthday->diffInYears() >= $data['years']) {
                         $returnValue = true;
                     }
                 }
                 break;
 
             case $prefix . 'max_age':
-                if ($birthday = $user->Profile->getBirthday(true)) {
-                    $birthday = Carbon::createFromTimestamp($birthday);
-                    if ($birthday->diffInYears() <= $user->Profile->age) {
+                if ($user->Profile->dob_year && $user->Profile->dob_month && $user->Profile->dob_day) {
+                    $birthday = (new Carbon())
+                        ->setDay($user->Profile->dob_day)
+                        ->setMonth($user->Profile->dob_month)
+                        ->setYear($user->Profile->dob_year)
+                        ->startOfDay();
+
+                    if ($birthday->diffInYears() <= $data['years']) {
                         $returnValue = true;
                     }
                 }
@@ -1453,40 +1466,56 @@ class CriteriaUser
 
             case $prefix . 'last_activity':
                 $lastActivity = Carbon::createFromTimestamp($user->last_activity);
-                $returnValue = $lastActivity->diffInMinutes() >= $data['minutes'];
+                if ($lastActivity->diffInMinutes() >= $data['minutes']) {
+                    $returnValue = true;
+                }
                 break;
 
             case $prefix . 'max_last_activity':
                 $lastActivity = Carbon::createFromTimestamp($user->last_activity);
-                $returnValue = $lastActivity->diffInMinutes() <= $data['minutes'];
+                if ($lastActivity->diffInMinutes() <= $data['minutes']) {
+                    $returnValue = true;
+                }
                 break;
 
             case $prefix . 'posts_days':
-                $returnValue = $data['posts'] <= $user->getThucPostsDays($data['days']);
+                if ($data['posts'] <= $user->getThucPostsDays($data['days'])) {
+                    $returnValue = true;
+                }
                 break;
 
             case $prefix . 'max_posts_days':
-                $returnValue = $data['posts'] >= $user->getThucPostsDays($data['days']);
+                if ($data['posts'] >= $user->getThucPostsDays($data['days'])) {
+                    $returnValue = true;
+                }
                 break;
 
             case $prefix . 'posts_days_forums':
-                $returnValue = $data['posts'] <= $user->getThucPostsDaysForums($data['days'], $data['nodes']);
+                if ($data['posts'] <= $user->getThucPostsDaysForums($data['days'], $data['nodes'])) {
+                    $returnValue = true;
+                }
                 break;
 
             case $prefix . 'max_posts_days_forums':
-                $returnValue = $data['posts'] >= $user->getThucPostsDaysForums($data['days'], $data['nodes']);
+                if ($data['posts'] >= $user->getThucPostsDaysForums($data['days'], $data['nodes'])) {
+                    $returnValue = true;
+                }
                 break;
 
             case $prefix . 'registered_before_date':
                 $registerDate = Carbon::createFromTimestamp($user->register_date);
                 $date = new Carbon($data['date']);
-                $returnValue = $registerDate->isBefore($date);
+                if ($registerDate->isBefore($date)) {
+                    $returnValue = true;
+                }
                 break;
 
             case $prefix . 'registered_after_date':
                 $registerDate = Carbon::createFromTimestamp($user->register_date);
                 $date = new Carbon($data['date']);
-                $returnValue = $registerDate->isAfter($date);
+                if ($registerDate->isAfter($date)) {
+                    $returnValue = true;
+                }
                 break;
 
             case $prefix . 'user_id':
@@ -1502,10 +1531,7 @@ class CriteriaUser
                 break;
 
             case $prefix . 'following_user_one_of':
-                /** @var \XF\Repository\User $userRepo */
-                $userRepo = \XF::repository('XF:User');
-                $users = $userRepo->getUsersByNames(array_map('trim', explode(',', $data['names'])));
-                foreach ($users as $followedUser) {
+                foreach (self::getUsers($data['names']) as $followedUser) {
                     if ($user->isFollowing($followedUser)) {
                         $returnValue = true;
                         break 2;
@@ -1514,10 +1540,7 @@ class CriteriaUser
                 break;
 
             case $prefix . 'following_user_none_of':
-                /** @var \XF\Repository\User $userRepo */
-                $userRepo = \XF::repository('XF:User');
-                $users = $userRepo->getUsersByNames(array_map('trim', explode(',', $data['names'])));
-                foreach ($users as $followedUser) {
+                foreach (self::getUsers($data['names']) as $followedUser) {
                     if ($user->isFollowing($followedUser)) {
                         break 2;
                     }
@@ -1526,10 +1549,7 @@ class CriteriaUser
                 break;
 
             case $prefix . 'following_user_all_of':
-                /** @var \XF\Repository\User $userRepo */
-                $userRepo = \XF::repository('XF:User');
-                $users = $userRepo->getUsersByNames(array_map('trim', explode(',', $data['names'])));
-                foreach ($users as $followedUser) {
+                foreach (self::getUsers($data['names']) as $followedUser) {
                     if (!$user->isFollowing($followedUser)) {
                         break 2;
                     }
@@ -1538,10 +1558,7 @@ class CriteriaUser
                 break;
 
             case $prefix . 'ignoring_user_one_of':
-                /** @var \XF\Repository\User $userRepo */
-                $userRepo = \XF::repository('XF:User');
-                $users = $userRepo->getUsersByNames(array_map('trim', explode(',', $data['names'])));
-                foreach ($users as $ignoredUser) {
+                foreach (self::getUsers($data['names']) as $ignoredUser) {
                     if ($user->isIgnoring($ignoredUser)) {
                         $returnValue = true;
                         break 2;
@@ -1550,10 +1567,7 @@ class CriteriaUser
                 break;
 
             case $prefix . 'ignoring_user_none_of':
-                /** @var \XF\Repository\User $userRepo */
-                $userRepo = \XF::repository('XF:User');
-                $users = $userRepo->getUsersByNames(array_map('trim', explode(',', $data['names'])));
-                foreach ($users as $ignoredUser) {
+                foreach (self::getUsers($data['names']) as $ignoredUser) {
                     if ($user->isIgnoring($ignoredUser)) {
                         break 2;
                     }
@@ -1562,10 +1576,7 @@ class CriteriaUser
                 break;
 
             case $prefix . 'ignoring_user_all_of':
-                /** @var \XF\Repository\User $userRepo */
-                $userRepo = \XF::repository('XF:User');
-                $users = $userRepo->getUsersByNames(array_map('trim', explode(',', $data['names'])));
-                foreach ($users as $ignoredUser) {
+                foreach (self::getUsers($data['names']) as $ignoredUser) {
                     if (!$user->isIgnoring($ignoredUser)) {
                         break 2;
                     }
@@ -1582,6 +1593,13 @@ class CriteriaUser
         }
 
         return null;
+    }
+
+    protected static function getUsers($userNames)
+    {
+        /** @var \XF\Repository\User $userRepo */
+        $userRepo = \XF::repository('XF:User');
+        return $userRepo->getUsersByNames(array_map('trim', explode(',', $userNames)));
     }
 
     /**
@@ -1691,49 +1709,67 @@ class CriteriaUser
 
             case 'date-day-equals':
                 $date = new Carbon($value);
-                $returnValue = $date->day == +$data['day'];
+                if ($date->day == +$data['day']) {
+                    $returnValue = true;
+                }
                 break;
 
             case 'date-month-equals':
                 $date = new Carbon($value);
-                $returnValue = $date->month == +$data['month'];
+                if ($date->month == +$data['month']) {
+                    $returnValue = true;
+                }
                 break;
 
             case 'date-year-equals':
                 $date = new Carbon($value);
-                $returnValue = $date->year == +$data['year'];
+                if ($date->year == +$data['year']) {
+                    $returnValue = true;
+                }
                 break;
 
             case 'date-before':
                 $date = new Carbon($value);
                 $target = new Carbon($data['date']);
-                $returnValue = $date->isBefore($target);
+                if ($date->isBefore($target)) {
+                    $returnValue = true;
+                }
                 break;
 
             case 'date-after':
                 $date = new Carbon($value);
                 $target = new Carbon($data['date']);
-                $returnValue = $date->isAfter($target);
+                if ($date->isAfter($target)) {
+                    $returnValue = true;
+                }
                 break;
 
             case 'date-days-past':
                 $date = new Carbon($value);
-                $returnValue = $date->isPast() && $date->diffInDays() >= $data['days'];
+                if ($date->isPast() && $date->diffInDays() >= $data['days']) {
+                    $returnValue = true;
+                }
                 break;
 
             case 'date-max-days-past':
                 $date = new Carbon($value);
-                $returnValue = $date->isPast() && $date->diffInDays() <= $data['days'];
+                if ($date->isPast() && $date->diffInDays() <= $data['days']) {
+                    $returnValue = true;
+                }
                 break;
 
             case 'date-days-future':
                 $date = new Carbon($value);
-                $returnValue = $date->isFuture() && $date->diffInDays() >= $data['days'];
+                if ($date->isFuture() && $date->diffInDays() >= $data['days']) {
+                    $returnValue = true;
+                }
                 break;
 
             case 'date-max-days-future':
                 $date = new Carbon($value);
-                $returnValue = $date->isFuture() && $date->diffInDays() <= $data['days'];
+                if ($date->isFuture() && $date->diffInDays() <= $data['days']) {
+                    $returnValue = true;
+                }
                 break;
 
             case 'url-http':

@@ -2,6 +2,7 @@
 
 namespace ThemeHouse\UserCriteria\XF\Entity;
 
+use Carbon\Carbon;
 use XF\Mvc\Entity\Structure;
 
 /**
@@ -144,6 +145,10 @@ class User extends XFCP_User
     public function getThucPostsDays($days)
     {
         if (!isset($this->postDaysData[$days])) {
+            $date = new Carbon();
+            $timestamp = $date->startOfDay()
+                ->subDays($days)
+                ->timestamp;
             $this->postDaysData[$days] = \XF::db()->fetchOne("
                 SELECT
                     count(*)
@@ -153,7 +158,7 @@ class User extends XFCP_User
                   user_id = ?
                   AND message_state = 'visible'
                   AND post_date >= ?
-            ", [$this->user_id, \XF::$time - 60 * 60 * 24 * $days]);
+            ", [$this->user_id, $timestamp]);
         }
 
         return (int)$this->postDaysData[$days];
@@ -166,6 +171,10 @@ class User extends XFCP_User
      */
     public function getThucPostsDaysForums($days, $nodes = [])
     {
+        $date = new Carbon();
+        $timestamp = $date->startOfDay()
+            ->subDays($days)
+            ->timestamp;
         return \XF::db()->fetchOne("
             SELECT
                 count(*)
@@ -178,7 +187,7 @@ class User extends XFCP_User
               AND post.message_state = 'visible'
               AND post.post_date >= ?
               AND thread.node_id IN(" . join(',', $nodes) . ")
-        ", [$this->user_id, \XF::$time - 60 * 60 * 24 * $days]);
+        ", [$this->user_id, $timestamp]);
     }
 
     /**
@@ -545,7 +554,7 @@ class User extends XFCP_User
                 , array_fill(0, $userIdCount, $this->user_id));
 
             if (is_array($aggregates)) {
-                $aggregates = array_map('intval', $this->thuc_user_criteria_cache['watch']);
+                $aggregates = array_map('intval', $aggregates);
             } else {
                 $aggregates = [
                     'forums' => 0,
