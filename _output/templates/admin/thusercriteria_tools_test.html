@@ -1,0 +1,54 @@
+<xf:title>{{ phrase('thusercriteria_test') }}</xf:title>
+<xf:description>{{ phrase('thusercriteria_use_this_tool_to_test_for_errors') }}</xf:description>
+
+<xf:if is="$result">
+    <xf:if is="$result.rulesFailed">
+        <div class="blockMessage blockMessage--error">
+            {{ phrase('thusercriteria_the_following_rules_failed:') }}
+        </div>
+        <div class="blocks blocks--close">
+            <xf:foreach loop="$result.rulesFailed" key="$failedRule" value="$errorMessage">
+                <div class="block">
+                    <div class="block-container">
+                        <h3 class="block-formSectionHeader" style="background:{{ property('errorBg') }}; color:{{ property('errorColor') }};">
+                            <span class="collapseTrigger collapseTrigger--block" data-xf-click="toggle" data-target="< :up:next">
+                                {$failedRule}
+                            </span>
+                        </h3>
+                        <div class="block-body block-body--contained block-body--collapsible" tabindex="-1">
+                            <div class="block-row">
+                                {$errorMessage|raw}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </xf:foreach>
+        </div>
+    <xf:else />
+        <div class="blockMessage blockMessage--success">
+            {{ phrase('thusercriteria_test_completed_successfully') }}
+        </div>
+    </xf:if>
+
+    <div class="block">
+        <div class="block-container">
+            <h3 class="block-formSectionHeader">
+                <span class="collapseTrigger collapseTrigger--block is-active" data-xf-click="toggle" data-target="< :up:next">
+                    {{ phrase('thusercriteria_rules_tested') }}
+                </span>
+            </h3>
+            <div class="block-body block-body--contained block-body--collapsible is-active" tabindex="-1">
+                <div class="block-row">
+                    <pre>{$result.rulesTested|join('<br>')}</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</xf:if>
+
+<xf:form action="{{ link('tools/user-criteria-test') }}" class="block">
+    <div class="block-container">
+        <h2 class="block-header">{{ phrase('thusercriteria_test') }}</h2>
+        <xf:submitrow submit="{{ phrase('run_test') }}" />
+    </div>
+</xf:form>

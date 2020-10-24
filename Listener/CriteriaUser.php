@@ -413,7 +413,11 @@ class CriteriaUser
                 break;
 
             case $prefix . 'birth_day':
-                if ($birthday = $user->Profile->getBirthday(true)['timeStamp']) {
+                $birthday = $user->Profile->getBirthday(true);
+                if (isset($birthday['timeStamp']))
+                {
+                    $birthday = $birthday['timeStamp'];
+
                     $birthday = Carbon::createFromTimestamp($birthday);
                     if ($birthday->day == $data['day']) {
                         $returnValue = true;
@@ -422,18 +426,26 @@ class CriteriaUser
                 break;
 
             case $prefix . 'birth_month':
-                if ($birthday = $user->Profile->getBirthday(true)['timeStamp']) {
+                $birthday = $user->Profile->getBirthday(true);
+                if (isset($birthday['timeStamp']))
+                {
+                    $birthday = $birthday['timeStamp'];
+
                     $birthday = Carbon::createFromTimestamp($birthday);
-                    if ($birthday->month == $data['day']) {
+                    if ($birthday->month == $data['month']) {
                         $returnValue = true;
                     }
                 }
                 break;
 
             case $prefix . 'birth_year':
-                if ($birthday = $user->Profile->getBirthday(true)['timeStamp']) {
+                $birthday = $user->Profile->getBirthday(true);
+                if (isset($birthday['timeStamp']))
+                {
+                    $birthday = $birthday['timeStamp'];
+
                     $birthday = Carbon::createFromTimestamp($birthday);
-                    if ($birthday->year == $data['day']) {
+                    if ($birthday->year == $data['year']) {
                         $returnValue = true;
                     }
                 }
@@ -538,14 +550,14 @@ class CriteriaUser
                 break;
 
             case $prefix . 'polls':
-                if (\XF::db()->fetchOne('SELECT count(*) FROM themehouse.xf_poll_vote WHERE user_id = ?',
+                if (\XF::db()->fetchOne('SELECT count(*) FROM xf_poll_vote WHERE user_id = ?',
                         [$user->user_id]) >= $data['count']) {
                     $returnValue = true;
                 }
                 break;
 
             case $prefix . 'max_polls':
-                if (\XF::db()->fetchOne('SELECT count(*) FROM themehouse.xf_poll_vote WHERE user_id = ?',
+                if (\XF::db()->fetchOne('SELECT count(*) FROM xf_poll_vote WHERE user_id = ?',
                         [$user->user_id]) <= $data['count']) {
                     $returnValue = true;
                 }
@@ -1276,49 +1288,49 @@ class CriteriaUser
                 if ($user->thuc_xfmg_album_rating_count >= $data['rating']) {
                     $returnValue = true;
                 }
-                exit;
+                break;
 
             case $prefix . 'max_xfmg_album_rating_count':
                 if ($user->thuc_xfmg_album_rating_count <= $data['rating']) {
                     $returnValue = true;
                 }
-                exit;
+                break;
 
             case $prefix . 'min_xfmg_album_rating_given_count':
                 if ($user->thuc_xfmg_album_rating_given_count >= $data['rating']) {
                     $returnValue = true;
                 }
-                exit;
+                break;
 
             case $prefix . 'max_xfmg_album_rating_given_count':
                 if ($user->thuc_xfmg_album_rating_given_count <= $data['rating']) {
                     $returnValue = true;
                 }
-                exit;
+                break;
 
             case $prefix . 'min_xfmg_media_item_rating_count':
                 if ($user->thuc_xfmg_media_item_rating_count >= $data['rating']) {
                     $returnValue = true;
                 }
-                exit;
+                break;
 
             case $prefix . 'max_xfmg_media_item_rating_count':
                 if ($user->thuc_xfmg_media_item_rating_count <= $data['rating']) {
                     $returnValue = true;
                 }
-                exit;
+                break;
 
             case $prefix . 'min_xfmg_media_item_rating_given_count':
                 if ($user->thuc_xfmg_media_item_rating_given_count >= $data['rating']) {
                     $returnValue = true;
                 }
-                exit;
+                break;
 
             case $prefix . 'max_xfmg_media_item_rating_given_count':
                 if ($user->thuc_xfmg_media_item_rating_given_count <= $data['rating']) {
                     $returnValue = true;
                 }
-                exit;
+                break;
 
             case $prefix . 'min_resource_category_oneof':
                 foreach ($data['categories'] as $categoryId) {
