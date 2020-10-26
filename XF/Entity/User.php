@@ -175,6 +175,11 @@ class User extends XFCP_User
         $timestamp = $date->startOfDay()
             ->subDays($days)
             ->timestamp;
+        if (!$nodes)
+        {
+          // avoid SQL error if no nodes specified
+          $nodes = [0];
+        }
         return \XF::db()->fetchOne("
             SELECT
                 count(*)
@@ -186,7 +191,7 @@ class User extends XFCP_User
               post.user_id = ?
               AND post.message_state = 'visible'
               AND post.post_date >= ?
-              AND thread.node_id IN(" . join(',', $nodes) . ")
+              AND thread.node_id IN(" . implode(',', $nodes) . ")
         ", [$this->user_id, $timestamp]);
     }
 
@@ -204,7 +209,7 @@ class User extends XFCP_User
     protected function calcThucWarningAggregates()
     {
         if (!isset($this->thuc_user_criteria_cache['warnings'])) {
-            $aggregates = $this->db()->fetchOne('
+            $aggregates = $this->db()->fetchRow('
             SELECT
                 COUNT(*) as total,
                 COUNT(is_expired) as expired,
@@ -274,22 +279,22 @@ class User extends XFCP_User
     protected function calcThucUserUpgradeAggregates()
     {
         if (!isset($this->thuc_user_criteria_cache['user_upgrades'])) {
-            $upgrades = $this->db()->fetchOne('
+            $upgrades = $this->db()->fetchRow('
             SELECT
-                SUM(active) > 1 AS has_active,
+                SUM(active) > 0 AS has_active,
                 MIN(end_date) AS next_expiry_date,
                 SUM(!active) AS expired_count
             FROM (
-              SELECT 
-                end_date,
+              SELECT
+                IF(end_date > 0, end_date, null) end_date,
                 1 active
               FROM
                 xf_user_upgrade_active
               WHERE
                 user_id = ?
-            UNION
+            UNION ALL
               SELECT
-                ~0 end_date,
+                null end_date,
                 0 active
               FROM
                 xf_user_upgrade_expired
@@ -304,7 +309,7 @@ class User extends XFCP_User
                 $this->thuc_user_criteria_cache['user_upgrades'] = [
                     'has_active' => 0,
                     'expired_count' => 0,
-                    'next_expiry_date' => PHP_INT_MAX
+                    'next_expiry_date' => 0
                 ];
             }
         }
@@ -362,7 +367,7 @@ class User extends XFCP_User
             $aggregates = $this->db()->fetchPairs("
             SELECT
                 node_id,
-                COUNT(*) as count
+                COUNT(*) as `count`
             FROM
               xf_thread
             WHERE
@@ -412,7 +417,7 @@ class User extends XFCP_User
             $aggregates = $this->db()->fetchPairs("
             SELECT
                 thread.node_id,
-                COUNT(*) as count
+                COUNT(*) as `count`
             FROM
               xf_post post
             LEFT JOIN xf_thread thread USING (thread_id)
@@ -587,7 +592,7 @@ class User extends XFCP_User
     protected function calcThucReportAggregates()
     {
         if (!isset($this->thuc_user_criteria_cache['reports'])) {
-            $aggregates = $this->db()->fetchOne("
+            $aggregates = $this->db()->fetchRow("
             SELECT
                 COUNT(*) total,
                 COUNT(report_state = 'open') open,
@@ -614,7 +619,7 @@ class User extends XFCP_User
      */
     public function getThucOpenReportCount()
     {
-        if (!$this->thuc_user_criteria_cache['reports']) {
+        if (!isset($this->thuc_user_criteria_cache['reports'])) {
             $this->calcThucReportAggregates();
         }
 
@@ -626,7 +631,7 @@ class User extends XFCP_User
      */
     public function getThucClosedReportCount()
     {
-        if (!$this->thuc_user_criteria_cache['reports']) {
+        if (!isset($this->thuc_user_criteria_cache['reports'])) {
             $this->calcThucReportAggregates();
         }
 
@@ -638,7 +643,7 @@ class User extends XFCP_User
      */
     public function getThucTrophyIds()
     {
-        if (!$this->thuc_user_criteria_cache['trophy_ids']) {
+        if (!isset($this->thuc_user_criteria_cache['trophy_ids'])) {
             $this->thuc_user_criteria_cache['trophy_ids'] = $this->db()->fetchAllColumn('
                 SELECT
                     trophy_id
@@ -742,7 +747,7 @@ class User extends XFCP_User
     /**
      * @return bool
      */
-    public function getThucIsSuperAdministrator()
+    public function getThucIsSuperAdmin()
     {
         if (!isset($this->thuc_user_criteria_cache['super_admin'])) {
             $this->thuc_user_criteria_cache['super_admin'] = (bool)$this->db()->fetchOne('
@@ -872,7 +877,7 @@ class User extends XFCP_User
     public function getThucReplyCountsForThreads($threadIds)
     {
         $threadIds = array_filter(array_map("intval", $threadIds));
-        $threadIdString = \XF::db()->escapeString(join(',', $threadIds));
+        $threadIdString = \XF::db()->escapeString(implode(',', $threadIds));
 
         return \XF::db()->fetchPairs("
             SELECT
@@ -1002,14 +1007,14 @@ class User extends XFCP_User
     /**
      * @return int
      */
-    public function getThucXfrmReviewGivenCount()
+    public function getThucXfrmResourceGivenReviewCount()
     {
         if (!isset($this->thuc_user_criteria_cache['xfrm_reviews_given'])) {
             $addonCache = \XF::app()->container('addon.cache');
             if (isset($addonCache['XFRM'])) {
                 $this->thuc_user_criteria_cache['xfrm_reviews_given'] = (int)$this->db()->fetchOne("
                 SELECT
-                    COUNT(*) AS count
+                    COUNT(*) AS `count`
                 FROM
                   xf_rm_resource_rating
                 JOIN
@@ -1143,7 +1148,7 @@ class User extends XFCP_User
         if (!isset($this->thuc_user_criteria_cache['xfmg_ratings_given'])) {
             $addonCache = \XF::app()->container('addon.cache');
             if (isset($addonCache['XFMG'])) {
-                $this->thuc_user_criteria_cache['xfmg_ratings_given'] = $this->db()->fetchOne("
+                $this->thuc_user_criteria_cache['xfmg_ratings_given'] = $this->db()->fetchRow("
                 SELECT
                     COUNT(content_type = 'xfmg_media') media_item,
                     COUNT(content_type = 'xfmg_album') album
@@ -1288,7 +1293,7 @@ class User extends XFCP_User
                 $aggregates = $this->db()->fetchPairs("
                 SELECT
                     resource_category_id,
-                    COUNT(*) AS count
+                    COUNT(*) AS `count`
                 FROM
                   xf_rm_resource
                 WHERE
@@ -1325,7 +1330,7 @@ class User extends XFCP_User
                 $aggregates = $this->db()->fetchPairs("
                 SELECT
                     category_id,
-                    COUNT(*) AS count
+                    COUNT(*) AS `count`
                 FROM
                   xf_mg_media_item
                 WHERE
