@@ -222,7 +222,7 @@
 			<xf:set var="$fieldNameMaxProfilePosts" value="{$xf.options.thusercriteria_prefix}max_profile_posts" />
 			<xf:option name="user_criteria[{$fieldNameMaxProfilePosts}][rule]" value="{$fieldNameMaxProfilePosts}" selected="{$criteria.{$fieldNameMaxProfilePosts}}"
 					   label="{{ phrase('th_usercriteria_user_has_posted_no_more_than_x_profile_posts:') }}">
-				<xf:numberbox name="user_criteria[{$fieldNameMaxPolls}][data][count]" value="{$criteria.{$fieldNameMaxProfilePosts}.count}"
+				<xf:numberbox name="user_criteria[{$fieldNameMaxProfilePosts}][data][count]" value="{$criteria.{$fieldNameMaxProfilePosts}.count}"
 							  size="5" min="0" step="1" />
 			</xf:option>
 			<xf:set var="$fieldNameMinProfilePostComments" value="{$xf.options.thusercriteria_prefix}min_profile_post_comments" />
@@ -304,14 +304,14 @@
 			<xf:set var="$fieldNameMinReplyTotal" value="{$xf.options.thusercriteria_prefix}min_replies" />
 			<xf:option name="user_criteria[{$fieldNameMinReplyTotal}][rule]" value="{$fieldNameMinReplyTotal}" selected="{$criteria.{$fieldNameMinReplyTotal}}"
 					   label="{{ phrase('thusercriteria_users_threads_have_received_at_least_x_replies:') }}">
-				<xf:numberbox name="user_criteria[{$fieldNameMinReplyTotal}][data][replies]" value="{$criteria.{$fieldNameMinReplyTotal}.threads}"
+				<xf:numberbox name="user_criteria[{$fieldNameMinReplyTotal}][data][replies]" value="{$criteria.{$fieldNameMinReplyTotal}.replies}"
 							  size="5" min="0" step="1" />
 			</xf:option>
 
 			<xf:set var="$fieldNameMaxReplyTotal" value="{$xf.options.thusercriteria_prefix}max_replies" />
 			<xf:option name="user_criteria[{$fieldNameMaxReplyTotal}][rule]" value="{$fieldNameMaxReplyTotal}" selected="{$criteria.{$fieldNameMaxReplyTotal}}"
 					   label="{{ phrase('thusercriteria_users_threads_has_no_more_than_x_replies:') }}">
-				<xf:numberbox name="user_criteria[{$fieldNameMaxReplyTotal}][data][replies]" value="{$criteria.{$fieldNameMaxReplyTotal}.threads}"
+				<xf:numberbox name="user_criteria[{$fieldNameMaxReplyTotal}][data][replies]" value="{$criteria.{$fieldNameMaxReplyTotal}.replies}"
 							  size="5" min="0" step="1" />
 			</xf:option>
 
@@ -1420,28 +1420,28 @@
 				<xf:option name="user_criteria[{$fieldNameMinXFMGAlbumRatingCount}][rule]" value="{$fieldNameMinXFMGAlbumRatingCount}" selected="{$criteria.{$fieldNameMinXFMGAlbumRatingCount}}"
 						   label="{{ phrase('thusercriteria_albums_rated_at_least_x_times:') }}">
 					<xf:numberbox name="user_criteria[{$fieldNameMinXFMGAlbumRatingCount}][data][rating]" value="{$criteria.{$fieldNameMinXFMGAlbumRatingCount}.rating}"
-								  size="5" min="0" max="5" step="0.05" />
+								  size="5" min="0" step="1" />
 				</xf:option>
 
 				<xf:set var="$fieldNameMaxXFMGAlbumRatingCount" value="{$xf.options.thusercriteria_prefix}max_xfmg_album_rating_count" />
 				<xf:option name="user_criteria[{$fieldNameMaxXFMGAlbumRatingCount}][rule]" value="{$fieldNameMaxXFMGAlbumRatingCount}" selected="{$criteria.{$fieldNameMaxXFMGAlbumRatingCount}}"
 						   label="{{ phrase('thusercriteria_albums_rated_no_more_than_x_times:') }}">
 					<xf:numberbox name="user_criteria[{$fieldNameMaxXFMGAlbumRatingCount}][data][rating]" value="{$criteria.{$fieldNameMaxXFMGAlbumRatingCount}.rating}"
-								  size="5" min="0" max="5" step="0.05" />
+								  size="5" min="0" step="1" />
 				</xf:option>
 
 				<xf:set var="$fieldNameMinXFMGAlbumRatingCountGiven" value="{$xf.options.thusercriteria_prefix}min_xfmg_album_rating_given_count" />
 				<xf:option name="user_criteria[{$fieldNameMinXFMGAlbumRatingCountGiven}][rule]" value="{$fieldNameMinXFMGAlbumRatingCountGiven}" selected="{$criteria.{$fieldNameMinXFMGAlbumRatingCountGiven}}"
 						   label="{{ phrase('thusercriteria_rated_at_least_x_albums:') }}">
 					<xf:numberbox name="user_criteria[{$fieldNameMinXFMGAlbumRatingCountGiven}][data][rating]" value="{$criteria.{$fieldNameMinXFMGAlbumRatingCountGiven}.rating}"
-								  size="5" min="0" max="5" step="0.05" />
+								  size="5" min="0" step="1" />
 				</xf:option>
 
 				<xf:set var="$fieldNameMaxXFMGAlbumRatingCountGiven" value="{$xf.options.thusercriteria_prefix}max_xfmg_album_rating_given_count" />
 				<xf:option name="user_criteria[{$fieldNameMaxXFMGAlbumRatingCountGiven}][rule]" value="{$fieldNameMaxXFMGAlbumRatingCountGiven}" selected="{$criteria.{$fieldNameMaxXFMGAlbumRatingCountGiven}}"
 						   label="{{ phrase('thusercriteria_rated_no_more_than_x_albums:') }}">
 					<xf:numberbox name="user_criteria[{$fieldNameMaxXFMGAlbumRatingCountGiven}][data][rating]" value="{$criteria.{$fieldNameMaxXFMGAlbumRatingCountGiven}.rating}"
-								  size="5" min="0" max="5" step="0.05" />
+								  size="5" min="0" step="1" />
 				</xf:option>
 			</xf:optgroup>
 			<xf:optgroup label="{{ phrase('thusercriteria_item_ratings') }}">
@@ -1477,28 +1477,28 @@
 				<xf:option name="user_criteria[{$fieldNameMinXFMGMediaItemRatingCount}][rule]" value="{$fieldNameMinXFMGMediaItemRatingCount}" selected="{$criteria.{$fieldNameMinXFMGMediaItemRatingCount}}"
 						   label="{{ phrase('thusercriteria_media_items_rated_at_least_x_times:') }}">
 					<xf:numberbox name="user_criteria[{$fieldNameMinXFMGMediaItemRatingCount}][data][rating]" value="{$criteria.{$fieldNameMinXFMGMediaItemRatingCount}.rating}"
-								  size="5" min="0" max="5" step="0.05" />
+								  size="5" min="0" step="1" />
 				</xf:option>
 
 				<xf:set var="$fieldNameMaxXFMGMediaItemRatingCount" value="{$xf.options.thusercriteria_prefix}max_xfmg_media_item_rating_count" />
 				<xf:option name="user_criteria[{$fieldNameMaxXFMGMediaItemRatingCount}][rule]" value="{$fieldNameMaxXFMGMediaItemRatingCount}" selected="{$criteria.{$fieldNameMaxXFMGMediaItemRatingCount}}"
 						   label="{{ phrase('thusercriteria_media_items_rated_no_more_than_x_times:') }}">
 					<xf:numberbox name="user_criteria[{$fieldNameMaxXFMGMediaItemRatingCount}][data][rating]" value="{$criteria.{$fieldNameMaxXFMGMediaItemRatingCount}.rating}"
-								  size="5" min="0" max="5" step="0.05" />
+								  size="5" min="0" step="1" />
 				</xf:option>
 
 				<xf:set var="$fieldNameMinXFMGMediaItemRatingCountGiven" value="{$xf.options.thusercriteria_prefix}min_xfmg_media_item_rating_given_count" />
 				<xf:option name="user_criteria[{$fieldNameMinXFMGMediaItemRatingCountGiven}][rule]" value="{$fieldNameMinXFMGMediaItemRatingCountGiven}" selected="{$criteria.{$fieldNameMinXFMGMediaItemRatingCountGiven}}"
 						   label="{{ phrase('thusercriteria_rated_at_least_x_media_items:') }}">
 					<xf:numberbox name="user_criteria[{$fieldNameMinXFMGMediaItemRatingCountGiven}][data][rating]" value="{$criteria.{$fieldNameMinXFMGMediaItemRatingCountGiven}.rating}"
-								  size="5" min="0" max="5" step="0.05" />
+								  size="5" min="0" step="1" />
 				</xf:option>
 
 				<xf:set var="$fieldNameMaxXFMGMediaItemRatingCountGiven" value="{$xf.options.thusercriteria_prefix}max_xfmg_media_item_rating_given_count" />
 				<xf:option name="user_criteria[{$fieldNameMaxXFMGMediaItemRatingCountGiven}][rule]" value="{$fieldNameMaxXFMGMediaItemRatingCountGiven}" selected="{$criteria.{$fieldNameMaxXFMGMediaItemRatingCountGiven}}"
 						   label="{{ phrase('thusercriteria_rated_no_more_than_x_media_items:') }}">
 					<xf:numberbox name="user_criteria[{$fieldNameMaxXFMGMediaItemRatingCountGiven}][data][rating]" value="{$criteria.{$fieldNameMaxXFMGMediaItemRatingCountGiven}.rating}"
-								  size="5" min="0" max="5" step="0.05" />
+								  size="5" min="0" step="1" />
 				</xf:option>
 			</xf:optgroup>
 		</xf:checkboxrow>
