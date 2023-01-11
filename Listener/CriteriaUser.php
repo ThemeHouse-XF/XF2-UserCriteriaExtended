@@ -1478,14 +1478,14 @@ class CriteriaUser
 
             case $prefix . 'last_activity':
                 $lastActivity = Carbon::createFromTimestamp($user->last_activity);
-                if ($lastActivity->diffInMinutes() >= $data['minutes']) {
+                if ($lastActivity->diffInMinutes() <= $data['minutes']) {
                     $returnValue = true;
                 }
                 break;
 
             case $prefix . 'max_last_activity':
                 $lastActivity = Carbon::createFromTimestamp($user->last_activity);
-                if ($lastActivity->diffInMinutes() <= $data['minutes']) {
+                if ($lastActivity->diffInMinutes() >= $data['minutes']) {
                     $returnValue = true;
                 }
                 break;
