@@ -1478,14 +1478,56 @@ class CriteriaUser
 
             case $prefix . 'last_activity':
                 $lastActivity = Carbon::createFromTimestamp($user->last_activity);
-                if ($lastActivity->diffInMinutes() <= $data['minutes']) {
+                $compare = Carbon::now();
+
+                if (isset($data['minutes']) && $data['minutes']) {
+                    $compare->subMinutes($data['minutes']);
+                }
+                if (isset($data['hours']) && $data['hours']) {
+                    $compare->subHours($data['hours']);
+                }
+                if (isset($data['days']) && $data['days']) {
+                    $compare->subDays($data['days']);
+                }
+                if (isset($data['weeks']) && $data['weeks']) {
+                    $compare->subWeeks($data['weeks']);
+                }
+                if (isset($data['months']) && $data['months']) {
+                    $compare->subMonths($data['months']);
+                }
+                if (isset($data['years']) && $data['years']) {
+                    $compare->subYears($data['years']);
+                }
+
+                if ($lastActivity->greaterThanOrEqualTo($compare)) {
                     $returnValue = true;
                 }
                 break;
 
             case $prefix . 'max_last_activity':
                 $lastActivity = Carbon::createFromTimestamp($user->last_activity);
-                if ($lastActivity->diffInMinutes() >= $data['minutes']) {
+                $compare = Carbon::now();
+
+                if (isset($data['minutes']) && $data['minutes']) {
+                    $compare->subMinutes($data['minutes']);
+                }
+                if (isset($data['hours']) && $data['hours']) {
+                    $compare->subHours($data['hours']);
+                }
+                if (isset($data['days']) && $data['days']) {
+                    $compare->subDays($data['days']);
+                }
+                if (isset($data['weeks']) && $data['weeks']) {
+                    $compare->subWeeks($data['weeks']);
+                }
+                if (isset($data['months']) && $data['months']) {
+                    $compare->subMonths($data['months']);
+                }
+                if (isset($data['years']) && $data['years']) {
+                    $compare->subYears($data['years']);
+                }
+
+                if ($lastActivity->lessThan($compare)) {
                     $returnValue = true;
                 }
                 break;

@@ -1,0 +1,1 @@
+Time periods will be combined to create the date to compare to. For example, 2 years and 3 months, or 5 hours and 35 minutes.
