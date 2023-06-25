@@ -660,27 +660,33 @@ class CriteriaUser
                 break;
 
             case $prefix . 'has_trophy':
-                if (!empty(array_intersect($user->thuc_trophy_ids, array_map("intval", $data['trophies'])))) {
-                    $returnValue = true;
+                if (!empty($data['trophies'])) {
+                    if (!empty(array_intersect($user->thuc_trophy_ids, array_map("intval", $data['trophies'])))) {
+                        $returnValue = true;
+                    }
                 }
                 break;
 
             case $prefix . 'has_not_trophy':
-                if (empty(array_intersect($user->thuc_trophy_ids, array_map("intval", $data['trophies'])))) {
-                    $returnValue = true;
+                if (!empty($data['trophies'])) {
+                    if (empty(array_intersect($user->thuc_trophy_ids, array_map("intval", $data['trophies'])))) {
+                        $returnValue = true;
+                    }
                 }
                 break;
 
             case $prefix . 'has_trophies':
-                $earntTrophies = $user->thuc_trophy_ids;
-                $needsTrophies = array_map("intval", $data['trophies']);
-                $earntNeededTrophies = array_intersect($needsTrophies, $earntTrophies);
+                if (!empty($data['trophies'])) {
+                    $earntTrophies = $user->thuc_trophy_ids;
+                    $needsTrophies = array_map("intval", $data['trophies']);
+                    $earntNeededTrophies = array_intersect($needsTrophies, $earntTrophies);
 
-                sort($earntNeededTrophies);
-                sort($needsTrophies);
+                    sort($earntNeededTrophies);
+                    sort($needsTrophies);
 
-                if ($earntNeededTrophies == $needsTrophies) {
-                    $returnValue = true;
+                    if ($earntNeededTrophies == $needsTrophies) {
+                        $returnValue = true;
+                    }
                 }
                 break;
 
@@ -745,119 +751,143 @@ class CriteriaUser
                 break;
 
             case $prefix . 'min_forum_threads_oneof':
-                foreach ($data['nodes'] as $nodeId) {
-                    if ($user->getThucNodeThreadCount($nodeId) >= $data['threads']) {
-                        $returnValue = true;
-                        break 2;
+                if (!empty($data['nodes'])) {
+                    foreach ($data['nodes'] as $nodeId) {
+                        if ($user->getThucNodeThreadCount($nodeId) >= $data['threads']) {
+                            $returnValue = true;
+                            break 2;
+                        }
                     }
                 }
                 break;
 
             case $prefix . 'max_forum_threads_oneof':
-                foreach ($data['nodes'] as $nodeId) {
-                    if ($user->getThucNodeThreadCount($nodeId) <= $data['threads']) {
-                        $returnValue = true;
-                        break 2;
+                if (!empty($data['nodes'])) {
+                    foreach ($data['nodes'] as $nodeId) {
+                        if ($user->getThucNodeThreadCount($nodeId) <= $data['threads']) {
+                            $returnValue = true;
+                            break 2;
+                        }
                     }
                 }
                 break;
 
             case $prefix . 'min_forum_threads_combined':
-                $total = 0;
-                foreach ($data['nodes'] as $nodeId) {
-                    $total += $user->getThucNodeThreadCount($nodeId);
-                }
-                if ($total >= $data['threads']) {
-                    $returnValue = true;
+                if (!empty($data['nodes'])) {
+                    $total = 0;
+                    foreach ($data['nodes'] as $nodeId) {
+                        $total += $user->getThucNodeThreadCount($nodeId);
+                    }
+                    if ($total >= $data['threads']) {
+                        $returnValue = true;
+                    }
                 }
                 break;
 
             case $prefix . 'max_forum_threads_combined':
-                $total = 0;
-                foreach ($data['nodes'] as $nodeId) {
-                    $total += $user->getThucNodeThreadCount($nodeId);
-                }
-                if ($total <= $data['threads']) {
-                    $returnValue = true;
+                if (!empty($data['nodes'])) {
+                    $total = 0;
+                    foreach ($data['nodes'] as $nodeId) {
+                        $total += $user->getThucNodeThreadCount($nodeId);
+                    }
+                    if ($total <= $data['threads']) {
+                        $returnValue = true;
+                    }
                 }
                 break;
 
             case $prefix . 'min_forum_threads_each':
-                foreach ($data['nodes'] as $nodeId) {
-                    if ($user->getThucNodeThreadCount($nodeId) < $data['threads']) {
-                        $returnValue = false;
-                        break 2;
+                if (!empty($data['nodes'])) {
+                    foreach ($data['nodes'] as $nodeId) {
+                        if ($user->getThucNodeThreadCount($nodeId) < $data['threads']) {
+                            $returnValue = false;
+                            break 2;
+                        }
                     }
+                    $returnValue = true;
                 }
-                $returnValue = true;
                 break;
 
             case $prefix . 'max_forum_threads_each':
-                foreach ($data['nodes'] as $nodeId) {
-                    if ($user->getThucNodeThreadCount($nodeId) > $data['threads']) {
-                        $returnValue = false;
-                        break 2;
+                if (!empty($data['nodes'])) {
+                    foreach ($data['nodes'] as $nodeId) {
+                        if ($user->getThucNodeThreadCount($nodeId) > $data['threads']) {
+                            $returnValue = false;
+                            break 2;
+                        }
                     }
+                    $returnValue = true;
                 }
-                $returnValue = true;
                 break;
 
             case $prefix . 'min_forum_posts_oneof':
-                foreach ($data['nodes'] as $nodeId) {
-                    if ($user->getThucNodePostCount($nodeId) >= $data['posts']) {
-                        $returnValue = true;
-                        break 2;
+                if (!empty($data['nodes'])) {
+                    foreach ($data['nodes'] as $nodeId) {
+                        if ($user->getThucNodePostCount($nodeId) >= $data['posts']) {
+                            $returnValue = true;
+                            break 2;
+                        }
                     }
                 }
                 break;
 
             case $prefix . 'max_forum_posts_oneof':
-                foreach ($data['nodes'] as $nodeId) {
-                    if ($user->getThucNodePostCount($nodeId) <= $data['posts']) {
-                        $returnValue = true;
-                        break 2;
+                if (!empty($data['nodes'])) {
+                    foreach ($data['nodes'] as $nodeId) {
+                        if ($user->getThucNodePostCount($nodeId) <= $data['posts']) {
+                            $returnValue = true;
+                            break 2;
+                        }
                     }
                 }
                 break;
 
             case $prefix . 'min_forum_posts_combined':
-                $total = 0;
-                foreach ($data['nodes'] as $nodeId) {
-                    $total += $user->getThucNodePostCount($nodeId);
-                }
-                if ($total >= $data['posts']) {
-                    $returnValue = true;
+                if (!empty($data['nodes'])) {
+                    $total = 0;
+                    foreach ($data['nodes'] as $nodeId) {
+                        $total += $user->getThucNodePostCount($nodeId);
+                    }
+                    if ($total >= $data['posts']) {
+                        $returnValue = true;
+                    }
                 }
                 break;
 
             case $prefix . 'max_forum_posts_combined':
-                $total = 0;
-                foreach ($data['nodes'] as $nodeId) {
-                    $total += $user->getThucNodePostCount($nodeId);
-                }
-                if ($total <= $data['posts']) {
-                    $returnValue = true;
+                if (!empty($data['nodes'])) {
+                    $total = 0;
+                    foreach ($data['nodes'] as $nodeId) {
+                        $total += $user->getThucNodePostCount($nodeId);
+                    }
+                    if ($total <= $data['posts']) {
+                        $returnValue = true;
+                    }
                 }
                 break;
 
             case $prefix . 'min_forum_posts_each':
-                foreach ($data['nodes'] as $nodeId) {
-                    if ($user->getThucNodePostCount($nodeId) < $data['posts']) {
-                        $returnValue = false;
-                        break 2;
+                if (!empty($data['nodes'])) {
+                    foreach ($data['nodes'] as $nodeId) {
+                        if ($user->getThucNodePostCount($nodeId) < $data['posts']) {
+                            $returnValue = false;
+                            break 2;
+                        }
                     }
+                    $returnValue = true;
                 }
-                $returnValue = true;
                 break;
 
             case $prefix . 'max_forum_posts_each':
-                foreach ($data['nodes'] as $nodeId) {
-                    if ($user->getThucNodePostCount($nodeId) > $data['posts']) {
-                        $returnValue = false;
-                        break 2;
+                if (!empty($data['nodes'])) {
+                    foreach ($data['nodes'] as $nodeId) {
+                        if ($user->getThucNodePostCount($nodeId) > $data['posts']) {
+                            $returnValue = false;
+                            break 2;
+                        }
                     }
+                    $returnValue = true;
                 }
-                $returnValue = true;
                 break;
 
             case $prefix . 'min_reactions_received_oneof':
@@ -1333,119 +1363,143 @@ class CriteriaUser
                 break;
 
             case $prefix . 'min_resource_category_oneof':
-                foreach ($data['categories'] as $categoryId) {
-                    if ($user->getThucXfrmResourceCountForCategory($categoryId) >= $data['count']) {
-                        $returnValue = true;
-                        break 2;
+                if (!empty($data['categories'])) {
+                    foreach ($data['categories'] as $categoryId) {
+                        if ($user->getThucXfrmResourceCountForCategory($categoryId) >= $data['count']) {
+                            $returnValue = true;
+                            break 2;
+                        }
                     }
                 }
                 break;
 
             case $prefix . 'max_resource_category_oneof':
-                foreach ($data['categories'] as $categoryId) {
-                    if ($user->getThucXfrmResourceCountForCategory($categoryId) <= $data['count']) {
-                        $returnValue = true;
-                        break 2;
+                if (!empty($data['categories'])) {
+                    foreach ($data['categories'] as $categoryId) {
+                        if ($user->getThucXfrmResourceCountForCategory($categoryId) <= $data['count']) {
+                            $returnValue = true;
+                            break 2;
+                        }
                     }
                 }
                 break;
 
             case $prefix . 'min_resource_category_combined':
-                $total = 0;
-                foreach ($data['categories'] as $categoryId) {
-                    $total += $user->getThucXfrmResourceCountForCategory($categoryId);
-                }
-                if ($total >= $data['count']) {
-                    $returnValue = true;
+                if (!empty($data['categories'])) {
+                    $total = 0;
+                    foreach ($data['categories'] as $categoryId) {
+                        $total += $user->getThucXfrmResourceCountForCategory($categoryId);
+                    }
+                    if ($total >= $data['count']) {
+                        $returnValue = true;
+                    }
                 }
                 break;
 
             case $prefix . 'max_resource_category_combined':
-                $total = 0;
-                foreach ($data['categories'] as $categoryId) {
-                    $total += $user->getThucXfrmResourceCountForCategory($categoryId);
-                }
-                if ($total <= $data['count']) {
-                    $returnValue = true;
+                if (!empty($data['categories'])) {
+                    $total = 0;
+                    foreach ($data['categories'] as $categoryId) {
+                        $total += $user->getThucXfrmResourceCountForCategory($categoryId);
+                    }
+                    if ($total <= $data['count']) {
+                        $returnValue = true;
+                    }
                 }
                 break;
 
             case $prefix . 'min_resource_category_each':
-                foreach ($data['categories'] as $categoryId) {
-                    if ($user->getThucXfrmResourceCountForCategory($categoryId) < $data['count']) {
-                        $returnValue = false;
-                        break 2;
+                if (!empty($data['categories'])) {
+                    foreach ($data['categories'] as $categoryId) {
+                        if ($user->getThucXfrmResourceCountForCategory($categoryId) < $data['count']) {
+                            $returnValue = false;
+                            break 2;
+                        }
                     }
+                    $returnValue = true;
                 }
-                $returnValue = true;
                 break;
 
             case $prefix . 'max_resource_category_each':
-                foreach ($data['categories'] as $categoryId) {
-                    if ($user->getThucXfrmResourceCountForCategory($categoryId) > $data['count']) {
-                        $returnValue = false;
-                        break 2;
+                if (!empty($data['categories'])) {
+                    foreach ($data['categories'] as $categoryId) {
+                        if ($user->getThucXfrmResourceCountForCategory($categoryId) > $data['count']) {
+                            $returnValue = false;
+                            break 2;
+                        }
                     }
+                    $returnValue = true;
                 }
-                $returnValue = true;
                 break;
 
             case $prefix . 'min_media_item_category_oneof':
-                foreach ($data['categories'] as $categoryId) {
-                    if ($user->getThucXfmgItemCountForCategory($categoryId) >= $data['count']) {
-                        $returnValue = true;
-                        break 2;
+                if (!empty($data['categories'])) {
+                    foreach ($data['categories'] as $categoryId) {
+                        if ($user->getThucXfmgItemCountForCategory($categoryId) >= $data['count']) {
+                            $returnValue = true;
+                            break 2;
+                        }
                     }
                 }
                 break;
 
             case $prefix . 'max_media_item_category_oneof':
-                foreach ($data['categories'] as $categoryId) {
-                    if ($user->getThucXfmgItemCountForCategory($categoryId) <= $data['count']) {
-                        $returnValue = true;
-                        break 2;
+                if (!empty($data['categories'])) {
+                    foreach ($data['categories'] as $categoryId) {
+                        if ($user->getThucXfmgItemCountForCategory($categoryId) <= $data['count']) {
+                            $returnValue = true;
+                            break 2;
+                        }
                     }
                 }
                 break;
 
             case $prefix . 'min_media_item_category_combined':
-                $total = 0;
-                foreach ($data['categories'] as $categoryId) {
-                    $total += $user->getThucXfmgItemCountForCategory($categoryId);
-                }
-                if ($total >= $data['count']) {
-                    $returnValue = true;
+                if (!empty($data['categories'])) {
+                    $total = 0;
+                    foreach ($data['categories'] as $categoryId) {
+                        $total += $user->getThucXfmgItemCountForCategory($categoryId);
+                    }
+                    if ($total >= $data['count']) {
+                        $returnValue = true;
+                    }
                 }
                 break;
 
             case $prefix . 'max_media_item_category_combined':
-                $total = 0;
-                foreach ($data['categories'] as $categoryId) {
-                    $total += $user->getThucXfmgItemCountForCategory($categoryId);
-                }
-                if ($total <= $data['count']) {
-                    $returnValue = true;
+                if (!empty($data['categories'])) {
+                    $total = 0;
+                    foreach ($data['categories'] as $categoryId) {
+                        $total += $user->getThucXfmgItemCountForCategory($categoryId);
+                    }
+                    if ($total <= $data['count']) {
+                        $returnValue = true;
+                    }
                 }
                 break;
 
             case $prefix . 'min_media_item_category_each':
-                foreach ($data['categories'] as $categoryId) {
-                    if ($user->getThucXfmgItemCountForCategory($categoryId) < $data['count']) {
-                        $returnValue = false;
-                        break 2;
+                if (!empty($data['categories'])) {
+                    foreach ($data['categories'] as $categoryId) {
+                        if ($user->getThucXfmgItemCountForCategory($categoryId) < $data['count']) {
+                            $returnValue = false;
+                            break 2;
+                        }
                     }
+                    $returnValue = true;
                 }
-                $returnValue = true;
                 break;
 
             case $prefix . 'max_media_item_category_each':
-                foreach ($data['categories'] as $categoryId) {
-                    if ($user->getThucXfmgItemCountForCategory($categoryId) > $data['count']) {
-                        $returnValue = false;
-                        break 2;
+                if (!empty($data['categories'])) {
+                    foreach ($data['categories'] as $categoryId) {
+                        if ($user->getThucXfmgItemCountForCategory($categoryId) > $data['count']) {
+                            $returnValue = false;
+                            break 2;
+                        }
                     }
+                    $returnValue = true;
                 }
-                $returnValue = true;
                 break;
 
             case $prefix . 'age':
