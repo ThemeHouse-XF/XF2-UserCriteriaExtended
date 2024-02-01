@@ -413,39 +413,27 @@ class CriteriaUser
                 break;
 
             case $prefix . 'birth_day':
-                $birthday = $user->Profile->getBirthday(true);
-                if (isset($birthday['timeStamp']))
+                if ($user->Profile->dob_day)
                 {
-                    $birthday = $birthday['timeStamp'];
-
-                    $birthday = Carbon::createFromTimestamp($birthday);
-                    if ($birthday->day == $data['day']) {
+                    if ($user->Profile->dob_day == $data['day']) {
                         $returnValue = true;
                     }
                 }
                 break;
 
             case $prefix . 'birth_month':
-                $birthday = $user->Profile->getBirthday(true);
-                if (isset($birthday['timeStamp']))
+                if ($user->Profile->dob_month)
                 {
-                    $birthday = $birthday['timeStamp'];
-
-                    $birthday = Carbon::createFromTimestamp($birthday);
-                    if ($birthday->month == $data['month']) {
+                    if ($user->Profile->dob_month == $data['month']) {
                         $returnValue = true;
                     }
                 }
                 break;
 
             case $prefix . 'birth_year':
-                $birthday = $user->Profile->getBirthday(true);
-                if (isset($birthday['timeStamp']))
+                if ($user->Profile->dob_year)
                 {
-                    $birthday = $birthday['timeStamp'];
-
-                    $birthday = Carbon::createFromTimestamp($birthday);
-                    if ($birthday->year == $data['year']) {
+                    if ($user->Profile->dob_year == $data['year']) {
                         $returnValue = true;
                     }
                 }
